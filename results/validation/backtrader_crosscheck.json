@@ -1,0 +1,462 @@
+{
+  "meta": {
+    "script": "validation/backtrader_crosscheck.py",
+    "backtrader_version": "1.9.78.123",
+    "pandas_version": "3.0.6",
+    "data_dir": "gqh",
+    "fwd_data_end": "2026-10-02",
+    "git_head": "19df147",
+    "kit": "gqh-webull-backtrader-starter",
+    "runtime_s": 21.0
+  },
+  "1_as_shipped": {
+    "setup": "kit DualMovingAverageStrategy (5/20 SMA), SPY 2005-01-03..2024-10-02, cash 100000, FixedSize stake 10, default broker (no commission, fills at next open), runonce=False",
+    "kit_metrics": {
+      "starting_cash": 100000.0,
+      "final_value": 102880.31,
+      "net_pnl": 2880.3086,
+      "net_pnl_pct": 2.8803086,
+      "max_drawdown_pct": 0.67928576,
+      "max_drawdown_money": 690.91965,
+      "sharpe_ratio_annualized": 0.5630504,
+      "total_trades": 141,
+      "won": 62,
+      "lost": 78,
+      "win_rate_pct": 43.971631,
+      "trades_net_pnl": 2826.6668
+    },
+    "capital_usage": {
+      "share_of_days_in_market": 0.65701066,
+      "mean_position_over_nav_when_invested": 0.020398285,
+      "min_position_over_nav_when_invested": 0.005632698,
+      "max_position_over_nav_when_invested": 0.054486311,
+      "mean_position_over_nav_all_days": 0.013401891,
+      "spy_adjusted_close_first_last": [
+        80.973526,
+        556.02826
+      ]
+    },
+    "daily_return_stats": {
+      "ann_return": 0.0014405479,
+      "ann_vol": 0.0025627258,
+      "sharpe_rf0": 0.56299376,
+      "max_drawdown": -0.0067928576,
+      "n_days": 4971,
+      "starter_sharpe_recomputed": 0.5630504
+    }
+  },
+  "2_matched_dual_ma": {
+    "setup": "5/20 SMA golden/death cross on SPY 2005-01-03..2024-10-02; backtrader: order_target_percent(0.99) on a golden cross while flat, close() on a death cross, default fill at the next open, cash 100000; engine: decision weights 0.99/0 from the same crossover, exec=next_open, rf = 0; Sharpe = mean/std(ddof=1) x sqrt(252), rf = 0",
+    "spy_buy_and_hold_rf0": {
+      "ann_return": 0.10260109,
+      "ann_vol": 0.1909993,
+      "sharpe_rf0": 0.60708706,
+      "max_drawdown": -0.5518944,
+      "n_days": 4971
+    },
+    "commission_0bp": {
+      "backtrader": {
+        "ann_return": 0.042006731,
+        "ann_vol": 0.10376789,
+        "sharpe_rf0": 0.4484778,
+        "max_drawdown": -0.28282291,
+        "n_days": 4971,
+        "kit_sharpe_analyzer": 0.44852292,
+        "trades": 136,
+        "entries_refused_for_cash": 5,
+        "refused_fill_date_and_gap": [
+          [
+            "2008-11-04",
+            0.020080325
+          ],
+          [
+            "2009-06-01",
+            0.01231953
+          ],
+          [
+            "2020-04-06",
+            0.038881288
+          ],
+          [
+            "2020-06-19",
+            0.012099914
+          ],
+          [
+            "2020-11-09",
+            0.039438931
+          ]
+        ],
+        "mean_position_over_nav_when_invested": 0.99052376
+      },
+      "engine": {
+        "ann_return": 0.045753515,
+        "ann_vol": 0.11086683,
+        "sharpe_rf0": 0.45907,
+        "max_drawdown": -0.36173757,
+        "n_days": 4971,
+        "trades": 141
+      },
+      "agreement_bt_minus_engine": {
+        "corr": 0.93553161,
+        "mean_abs_diff_bp": 3.0960757,
+        "max_abs_diff_bp": 570.80146,
+        "tracking_diff_ann": -0.0043580419,
+        "tracking_error_ann": 0.039162959,
+        "days_diff_over_1bp": 221,
+        "n_days": 4971
+      },
+      "diagnostic_engine_on_bt_positions": {
+        "ann_return": 0.041858715,
+        "ann_vol": 0.1037284,
+        "sharpe_rf0": 0.44724006,
+        "max_drawdown": -0.28424166,
+        "n_days": 4971,
+        "agreement_bt_minus_this": {
+          "corr": 0.99999076,
+          "mean_abs_diff_bp": 0.12155732,
+          "max_abs_diff_bp": 4.4453825,
+          "tracking_diff_ann": 0.0001460978,
+          "tracking_error_ann": 0.00044762749,
+          "days_diff_over_1bp": 85,
+          "n_days": 4971
+        }
+      },
+      "diagnostic_bt_cash_1e9": {
+        "ann_return": 0.037264917,
+        "ann_vol": 0.10290203,
+        "sharpe_rf0": 0.40705098,
+        "max_drawdown": -0.28289682,
+        "n_days": 4971,
+        "entries_refused_for_cash": 6,
+        "agreement_vs_engine": {
+          "corr": 0.92720741,
+          "mean_abs_diff_bp": 3.66455,
+          "max_abs_diff_bp": 570.80146,
+          "tracking_diff_ann": -0.0090092631,
+          "tracking_error_ann": 0.041525115,
+          "days_diff_over_1bp": 243,
+          "n_days": 4971
+        }
+      }
+    },
+    "commission_5bp": {
+      "backtrader": {
+        "ann_return": 0.027139981,
+        "ann_vol": 0.10225383,
+        "sharpe_rf0": 0.31304368,
+        "max_drawdown": -0.29135012,
+        "n_days": 4971,
+        "kit_sharpe_analyzer": 0.31307517,
+        "trades": 134,
+        "entries_refused_for_cash": 7,
+        "refused_fill_date_and_gap": [
+          [
+            "2008-11-04",
+            0.020080325
+          ],
+          [
+            "2009-06-01",
+            0.01231953
+          ],
+          [
+            "2009-07-17",
+            0.010203285
+          ],
+          [
+            "2016-02-22",
+            0.0097397203
+          ],
+          [
+            "2020-04-06",
+            0.038881288
+          ],
+          [
+            "2020-06-19",
+            0.012099914
+          ],
+          [
+            "2020-11-09",
+            0.039438931
+          ]
+        ],
+        "mean_position_over_nav_when_invested": 0.99048905
+      },
+      "engine": {
+        "ann_return": 0.03839923,
+        "ann_vol": 0.11090522,
+        "sharpe_rf0": 0.39530716,
+        "max_drawdown": -0.36994353,
+        "n_days": 4971,
+        "trades": 141
+      },
+      "agreement_bt_minus_engine": {
+        "corr": 0.92144649,
+        "mean_abs_diff_bp": 4.2231571,
+        "max_abs_diff_bp": 570.80265,
+        "tracking_diff_ann": -0.01183171,
+        "tracking_error_ann": 0.043087307,
+        "days_diff_over_1bp": 292,
+        "n_days": 4971
+      },
+      "diagnostic_engine_on_bt_positions": {
+        "ann_return": 0.027043952,
+        "ann_vol": 0.10220889,
+        "sharpe_rf0": 0.31222251,
+        "max_drawdown": -0.29274237,
+        "n_days": 4971,
+        "agreement_bt_minus_this": {
+          "corr": 0.9999917,
+          "mean_abs_diff_bp": 0.11161126,
+          "max_abs_diff_bp": 4.4164949,
+          "tracking_diff_ann": 9.7999192e-05,
+          "tracking_error_ann": 0.00041889128,
+          "days_diff_over_1bp": 71,
+          "n_days": 4971
+        }
+      }
+    }
+  },
+  "3_sleeve_c_replay": {
+    "setup": "sleeve C decision weights (ifc_treasury.decision_weights('FWD')); engine exec=next_close, rf = 0, 3 bp per side; backtrader: order at the close of d+1 for the decision of d, cheat-on-close fill, 3 bp commission per side, cash 1e9, margin account (leverage 10)",
+    "window": [
+      "2005-01-03",
+      "2026-10-02"
+    ],
+    "position_days": 772,
+    "max_weight": 2.0,
+    "days_weight_over_1": 616,
+    "backtrader": {
+      "ann_return": 0.028365954,
+      "ann_vol": 0.035778888,
+      "sharpe_rf0": 0.79967185,
+      "max_drawdown": -0.078720473,
+      "n_days": 5472,
+      "kit_sharpe_analyzer": 0.79974493,
+      "orders": 1030,
+      "orders_refused": 0
+    },
+    "engine": {
+      "ann_return": 0.028365723,
+      "ann_vol": 0.035778943,
+      "sharpe_rf0": 0.79966438,
+      "max_drawdown": -0.078720543,
+      "n_days": 5472
+    },
+    "agreement_bt_minus_engine": {
+      "corr": 1.0,
+      "mean_abs_diff_bp": 0.00010841673,
+      "max_abs_diff_bp": 0.0036812182,
+      "tracking_diff_ann": 2.2342192e-07,
+      "tracking_error_ann": 9.0016024e-07,
+      "days_diff_over_1bp": 0,
+      "n_days": 5472
+    },
+    "diagnostic_checksubmit_false_only": {
+      "note": "same replay with set_checksubmit(False) but no margin scheme (leverage 1): fills that would take cash below zero are refused at execution",
+      "orders_refused": 616,
+      "ann_return": 0.0048122745,
+      "ann_vol": 0.01023907,
+      "sharpe_rf0": 0.47397521,
+      "max_drawdown": -0.017018452,
+      "n_days": 5472,
+      "agreement_vs_engine": {
+        "corr": 0.28492687,
+        "mean_abs_diff_bp": 5.5479202,
+        "max_abs_diff_bp": 278.92345,
+        "tracking_diff_ann": -0.023758081,
+        "tracking_error_ann": 0.034295908,
+        "days_diff_over_1bp": 816,
+        "n_days": 5472
+      }
+    }
+  },
+  "4_submitted_replay": {
+    "setup": "F1 = A + C + TSMOM, minvar_lw, 8 % vol target, no brake (src/forward.py). Held ETF weights W_t = sum_s lam_s,t k_t held_s,t; backtrader orders W_t at the close of t-1 (cheat-on-close), per-ETF commission 3 bp tier 1 / 5 bp tier 2 per side, cash 1e9, margin account (leverage 10); engine 'simple' = sum_j W_j r_j - netted per-ETF costs with rf = 0 and no borrow fee",
+    "official_file_reproduced_by_forward_F1": {
+      "corr": 1.0,
+      "mean_abs_diff_bp": 4.7935351e-13,
+      "max_abs_diff_bp": 9.996344e-13,
+      "tracking_diff_ann": 1.3655389e-15,
+      "tracking_error_ann": 8.9518748e-16,
+      "days_diff_over_1bp": 0,
+      "n_days": 5134
+    },
+    "replay_orders": 72917,
+    "replay_orders_refused": 0,
+    "mean_net_etf_weight": 0.49945458,
+    "mean_gross_etf_weight": 0.92266906,
+    "periods": {
+      "IS_2006-05-08_2024-10-02": {
+        "backtrader_replay": {
+          "ann_return": 0.08483621,
+          "ann_vol": 0.076023382,
+          "sharpe_rf0": 1.1091456,
+          "max_drawdown": -0.11637469,
+          "n_days": 4633
+        },
+        "engine_simple": {
+          "ann_return": 0.084831135,
+          "ann_vol": 0.076023522,
+          "sharpe_rf0": 1.1090821,
+          "max_drawdown": -0.11637433,
+          "n_days": 4633
+        },
+        "official": {
+          "ann_return": 0.089753053,
+          "ann_vol": 0.075852243,
+          "sharpe_rf0": 1.1711216,
+          "max_drawdown": -0.11670703,
+          "n_days": 4633,
+          "sharpe_excess_official": 0.98448491
+        },
+        "bt_minus_engine_simple": {
+          "corr": 1.0,
+          "mean_abs_diff_bp": 0.00051166189,
+          "max_abs_diff_bp": 0.014752633,
+          "tracking_diff_ann": 4.6689375e-06,
+          "tracking_error_ann": 3.0799201e-06,
+          "days_diff_over_1bp": 0,
+          "n_days": 4633
+        },
+        "bt_minus_official": {
+          "corr": 0.99947237,
+          "mean_abs_diff_bp": 0.78462745,
+          "max_abs_diff_bp": 14.809723,
+          "tracking_diff_ann": -0.0045111998,
+          "tracking_error_ann": 0.0024727611,
+          "days_diff_over_1bp": 1208,
+          "n_days": 4633
+        },
+        "engine_simple_minus_official": {
+          "corr": 0.99947244,
+          "mean_abs_diff_bp": 0.78451288,
+          "max_abs_diff_bp": 14.809712,
+          "tracking_diff_ann": -0.0045158687,
+          "tracking_error_ann": 0.0024725958,
+          "days_diff_over_1bp": 1208,
+          "n_days": 4633
+        },
+        "official_minus_simple_ann": {
+          "cash_interest": 0.0084742311,
+          "trend_next_open_fill": -0.00040596985,
+          "stream_costs_vs_netted": 0.00037027885,
+          "overlay_costs": -0.0031935152,
+          "borrow_fee": -0.0007291562,
+          "total": 0.0045158687,
+          "residual_max_abs": 1.574126e-17
+        }
+      },
+      "OOS_2024-10-03_2026-10-02": {
+        "backtrader_replay": {
+          "ann_return": 0.018239149,
+          "ann_vol": 0.065810554,
+          "sharpe_rf0": 0.30744604,
+          "max_drawdown": -0.089761284,
+          "n_days": 501
+        },
+        "engine_simple": {
+          "ann_return": 0.018236007,
+          "ann_vol": 0.065810835,
+          "sharpe_rf0": 0.30739811,
+          "max_drawdown": -0.089760087,
+          "n_days": 501
+        },
+        "official": {
+          "ann_return": 0.029857431,
+          "ann_vol": 0.06589056,
+          "sharpe_rf0": 0.47937544,
+          "max_drawdown": -0.086697373,
+          "n_days": 501,
+          "sharpe_excess_official": -0.12152013
+        },
+        "bt_minus_engine_simple": {
+          "corr": 1.0,
+          "mean_abs_diff_bp": 0.00063861963,
+          "max_abs_diff_bp": 0.012920945,
+          "tracking_diff_ann": 3.0679615e-06,
+          "tracking_error_ann": 3.4901596e-06,
+          "days_diff_over_1bp": 0,
+          "n_days": 501
+        },
+        "bt_minus_official": {
+          "corr": 0.99856005,
+          "mean_abs_diff_bp": 1.6937835,
+          "max_abs_diff_bp": 10.918225,
+          "tracking_diff_ann": -0.011353122,
+          "tracking_error_ann": 0.00353475,
+          "days_diff_over_1bp": 388,
+          "n_days": 501
+        },
+        "engine_simple_minus_official": {
+          "corr": 0.99855994,
+          "mean_abs_diff_bp": 1.6939306,
+          "max_abs_diff_bp": 10.918186,
+          "tracking_diff_ann": -0.01135619,
+          "tracking_error_ann": 0.0035348902,
+          "days_diff_over_1bp": 388,
+          "n_days": 501
+        },
+        "official_minus_simple_ann": {
+          "cash_interest": 0.014731678,
+          "trend_next_open_fill": 0.0014575369,
+          "stream_costs_vs_netted": 0.00045487868,
+          "overlay_costs": -0.0044426834,
+          "borrow_fee": -0.00084522013,
+          "total": 0.01135619,
+          "residual_max_abs": 1.2034644e-17
+        }
+      }
+    }
+  },
+  "5_sharpe_definitions": {
+    "definition_starter": "mean / population std of daily TOTAL returns (rf = 0), x sqrt(252): backtrader SharpeRatio(timeframe=Days, riskfreerate=0, annualize=True)",
+    "definition_ours": "mean / sample std of daily returns in excess of the 3-month T-bill, x sqrt(252)",
+    "check_kit_analyzer_vs_formula_on_replay": {
+      "analyzer": 1.0069669,
+      "formula_on_timereturn": 1.0069669
+    },
+    "periods": {
+      "IS_2006-05-08_2024-10-02": {
+        "official_sharpe_ours": 0.98448491,
+        "official_sharpe_starter": 1.171248,
+        "official_total_returns_sample_std": 1.1711216,
+        "mean_tbill_ann": 0.014165551,
+        "ann_vol": 0.075852243,
+        "backtrader_replay_sharpe_starter": 1.1092653
+      },
+      "OOS_2024-10-03_2026-10-02": {
+        "official_sharpe_ours": -0.12152013,
+        "official_sharpe_starter": 0.47985458,
+        "official_total_returns_sample_std": 0.47937544,
+        "mean_tbill_ann": 0.039591816,
+        "ann_vol": 0.06589056,
+        "backtrader_replay_sharpe_starter": 0.30775333
+      }
+    }
+  },
+  "6_guide_example_costs": {
+    "setup": "section 4 replay, setcommission(commission=0.0005) per ETF and set_slippage_perc(0.0005): 5 bp + 5 bp per side on the netted ETF trades",
+    "replay_orders": 72919,
+    "replay_orders_refused": 0,
+    "periods": {
+      "IS_2006-05-08_2024-10-02": {
+        "ann_return": 0.070067984,
+        "ann_vol": 0.074467212,
+        "sharpe_rf0": 0.94661757,
+        "max_drawdown": -0.12144875,
+        "n_days": 4633,
+        "sharpe_starter": 0.94671975,
+        "sharpe_ours_excess_financed": 0.86347048
+      },
+      "OOS_2024-10-03_2026-10-02": {
+        "ann_return": 0.010582763,
+        "ann_vol": 0.068040404,
+        "sharpe_rf0": 0.18857018,
+        "max_drawdown": -0.09646375,
+        "n_days": 501,
+        "sharpe_starter": 0.18875866,
+        "sharpe_ours_excess_financed": -0.18744351
+      }
+    }
+  }
+}

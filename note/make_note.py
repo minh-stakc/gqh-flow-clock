@@ -155,6 +155,17 @@ def macros() -> dict:
         dv = diag["median_dollar_volume_2019_2024"]
         m.update({"corrES": num(diag["corr_ES_SPY"], 3), "corrZN": num(diag["corr_ZN_IEF"], 3),
                   "dvIEF": f"{dv['IEF'] / 1e9:.1f}", "dvZN": f"{dv['ZN16'] / 1e9:.0f}", "dvES": f"{dv['ES16'] / 1e9:.0f}"})
+    oby = R / "oos_by_year.json"
+    if oby.exists():
+        y = json.loads(oby.read_text())
+        b = y["by_year"]
+        m.update({"oosQfour": num(b["2024Q4_OOS"]["sharpe"]), "oosYfive": num(b["2025_OOS"]["sharpe"]),
+                  "oosYsix": num(b["2026_OOS"]["sharpe"]), "worstIS": num(y["worst_full_is_year_sharpe"]),
+                  "contAsix": pct(b["2026_OOS"]["contrib"]["A"]), "contCsix": pct(b["2026_OOS"]["contrib"]["C"]),
+                  "contTsix": pct(b["2026_OOS"]["contrib"]["TSMOM"]),
+                  "contAfive": pct(b["2025_OOS"]["contrib"]["A"]),
+                  "oosStartSeventeen": y["start2017"]["oos_start"],
+                  "ISseventeen": num(y["start2017"]["is_sharpe"]), "OOSseventeen": num(y["start2017"]["oos_sharpe"])})
     fwd = C.ROOT / "forward" / "historical_context.json"
     if fwd.exists():
         fc = json.loads(fwd.read_text())["strategies"]
@@ -162,6 +173,24 @@ def macros() -> dict:
         m["FtwoOOS"] = num(fc["F2"]["out_of_sample"]["sharpe"])
     else:
         m["FtwoIS"] = m["FtwoOOS"] = "n/a"
+    fwd2 = C.ROOT / "forward" / "historical_context2.json"
+    if fwd2.exists():
+        f2 = json.loads(fwd2.read_text())["strategies"]
+        for k, lab in (("S1", "Sone"), ("S2", "Stwo"), ("S3", "Sthree")):
+            m[f"{lab}IS"] = num(f2[k]["in_sample"]["sharpe"])
+            m[f"{lab}OOS"] = num(f2[k]["out_of_sample"]["sharpe"])
+    btx = R / "validation" / "backtrader_crosscheck.json"
+    if btx.exists():
+        b = json.loads(btx.read_text())
+        isk, oosk = "IS_2006-05-08_2024-10-02", "OOS_2024-10-03_2026-10-02"
+        g = b["6_guide_example_costs"]["periods"]
+        m["btISg"] = num(g[isk]["sharpe_ours_excess_financed"])
+        m["btOOSg"] = num(g[oosk]["sharpe_ours_excess_financed"])
+        rp = b["4_submitted_replay"]["periods"]
+        m["btDiff"] = f"{max(rp[k]['bt_minus_engine_simple']['mean_abs_diff_bp'] for k in (isk, oosk)):.4f}"
+        sd = b["5_sharpe_definitions"]["periods"]
+        m["stISdef"] = num(sd[isk]["official_sharpe_starter"])
+        m["stOOSdef"] = num(sd[oosk]["official_sharpe_starter"])
     return m
 
 

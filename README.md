@@ -19,6 +19,8 @@ We take the position two to four days ahead of these flows and hand it to them a
 
 - **Overfitting:** PBO is 0.023 over 1,404 ensemble configurations. The Deflated Sharpe under the pre-registered trial count is 0.40, so the in-sample Sharpe is not statistically significant after the search.
 - **Out-of-sample:** both raw effects kept their sign but shrank. The rebalancing spread fell from 11.0 to 2.5 bp/day; the Treasury month-end IEF return fell from 7.2 to 3.0 bp/day. That was too small to cover costs, and gross Sharpe fell from 1.35 to 0.38. Only the trend leg made money.
+- **By year out-of-sample:** 0.33 (Q4 2024), 1.12 (2025), −1.99 (2026 to date). With data starting in 2017 the 20% rule sets the split instead, and the same strategy gives 0.93 in-sample and −0.09 out-of-sample (`scripts/oos_by_year.py`).
+- **Organisers' starter cross-check:** the backtrader starter matches our engine on identical weights to 0.0006 bp a day. As one netted book at the hacker guide's example cost (5 bp commission plus 5 bp slippage per side) the strategy gives 0.86 in-sample and −0.19 out-of-sample. The starter's own Sharpe (total returns, risk-free rate 0) would show 1.17 and 0.48 for our returns, because it counts T-bill interest as return (`validation/backtrader_crosscheck.py`, `results/validation/`).
 - **Everything else** (every stream, the replications, risk, capacity and the deviations from the pre-registration) is in the note.
 
 ## Forward test (frozen 2026-10-03, before its data exists)
@@ -41,6 +43,22 @@ To run the forward evaluation after refreshing the data:
 
 ```bash
 python scripts/run_forward.py evaluate
+```
+
+## Forward test 2 (frozen 2026-10-03): the literature's best-evidenced strategies
+
+[`FORWARD_TEST_2.md`](FORWARD_TEST_2.md) (git tag `forward-test-2-2026-10-03`) registers the three strategies with the best live or post-publication evidence that daily liquid data can reproduce. They were chosen from the literature, not from our backtests, and their history was computed only after the freeze (`forward/historical_context2.json`, separate commit):
+
+| Strategy | Expected net Sharpe | In-sample Sharpe | Out-of-sample Sharpe |
+|---|---|---|---|
+| S1: broad CME trend, 30 futures, 1/3/12-month signals, 10% vol | 0.2–0.6 | −0.13 (from 2011-09) | 0.14 |
+| S2: 50/50 risk ES + S1, 10% vol (primary) | 0.4–0.7 | 0.50 (from 2011-09) | 0.46 |
+| S3: Faber GTAA, five ETFs, 10-month average | 0.3–0.6 | 0.51 (from 2005-11) | 0.70 |
+
+S1's weak history is reported, not acted on: the strategy stays in the test unchanged. Each report gives paired block-bootstrap intervals against yardsticks (TSMOM_F, a long-only version of S1, ES alone, buy-and-hold of the five ETFs). It also gives six-monthly correlations of S1 with two public managed-futures funds. The run procedure (one fresh data folder, run after 20:00 ET) is in the spec:
+
+```bash
+python scripts/run_forward2.py evaluate
 ```
 
 ## How it was tested
@@ -161,7 +179,10 @@ src/strategies/          ifc_rebalance (A), ifc_dash (B), ifc_treasury (C), ifc_
 src/ensemble.py, pbo.py  flow-and-trend ensemble, CSCV probability of backtest overfitting
 src/analysis.py          factor regressions, sub-periods, bootstrap, square-root-impact capacity
 scripts/                 per-module runners, ensemble search, selection, out-of-sample run, diagnostics
-tests/                   lookahead perturbation test
+tests/                   lookahead perturbation test (strategy modules and forward test 2)
+src/forward.py, forward2.py   frozen forward tests 1 and 2; scripts/run_forward*.py run them; forward/ holds positions,
+                         post-freeze history and (later) the quarterly reports
+validation/              cross-check against the organisers' backtrader starter kit
 data/                    download scripts only (no data)
 results/                 every number in the note (in-sample, out-of-sample, trial log, diagnostics)
 note/                    quant note source, generated numbers and figures, PDF
