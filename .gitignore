@@ -7,3 +7,8 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 research/
+
+# LaTeX build artefacts
+note/*.aux
+note/*.log
+note/*.out

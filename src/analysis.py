@@ -88,13 +88,14 @@ def capacity_curve(
     impact_coef: float = 1.0,
     adv_window: int = 63,
     start: str | None = None,
+    end: str | None = None,
 ) -> pd.DataFrame:
     """Square-root impact model: cost_bps(trade) = fixed + impact_coef * sigma_daily * sqrt(trade$/ADV$) * 1e4.
 
     Uses the strategy's actual daily trades (|delta w| x AUM) against each ETF's trailing
     63-day median dollar volume and 63-day daily volatility. Returns the net Sharpe at each AUM.
     """
-    aum_grid = aum_grid or [1e6, 1e7, 3e7, 1e8, 3e8, 1e9, 3e9, 1e10]
+    aum_grid = aum_grid or [1e3, 1e6, 1e7, 3e7, 1e8, 3e8, 1e9, 3e9, 1e10]
     close, vol = ohlc["close"], ohlc["volume"]
     tickers = list(res.weights.columns)
     dollar_vol = (close[tickers] * vol[tickers]).rolling(adv_window, min_periods=20).median()
@@ -104,8 +105,8 @@ def capacity_curve(
     dollar_vol, sigma = dollar_vol.reindex(idx).ffill(), sigma.reindex(idx).ffill()
     fixed = pd.Series({t: C.cost_bps(t) for t in tickers}) / 1e4
     gross_ex = res.excess + res.costs                             # excess return before costs
-    if start is not None:                                         # e.g. capacity at today's liquidity
-        keep = idx >= pd.Timestamp(start)
+    if start is not None or end is not None:                      # e.g. capacity at today's liquidity
+        keep = (idx >= pd.Timestamp(start or idx[0])) & (idx <= pd.Timestamp(end or idx[-1]))
         trades, dollar_vol, sigma, gross_ex = trades[keep], dollar_vol[keep], sigma[keep], gross_ex[keep]
     rows = []
     for aum in aum_grid:
