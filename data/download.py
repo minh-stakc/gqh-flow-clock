@@ -3,7 +3,8 @@
 Sources (all free, cited in the quant note):
   * Yahoo Finance via yfinance: daily OHLCV for US-listed ETFs, total-return adjusted
     (splits and distributions folded into OHLC with auto_adjust=True), plus Cboe
-    volatility indices used only as signals.
+    volatility indices used only as signals, and local-currency Euro Stoxx 50 / Nikkei 225
+    index levels (signal input of exploratory IFC sleeve D; `python data/download.py local`).
   * FRED (St. Louis Fed): 3-month T-bill (DTB3) for the cash rate.
   * Kenneth French Data Library: daily Fama-French 5 factors and momentum.
   * U.S. Treasury Fiscal Data API: every Treasury auction (dates, terms, sizes).
@@ -165,12 +166,30 @@ def download_auctions() -> None:
     print(f"auctions: {len(df)} rows {df['auction_date'].min().date()} .. {df['auction_date'].max().date()}")
 
 
+LOCAL_INDICES = ["^STOXX50E", "^N225"]   # local-currency index levels (exploratory sleeve D, IFC)
+
+
+def download_local_indices() -> None:
+    """Euro Stoxx 50 and Nikkei 225 price-index levels in local currency (Yahoo Finance).
+
+    Saved to local_indices.parquet in the same long format as index_daily.parquet; no other cache
+    file is touched. Index levels carry no corporate actions, so auto_adjust does not change them.
+    """
+    idx = _yf_long(LOCAL_INDICES)
+    idx = idx.dropna(subset=["close"])
+    idx = idx[idx["close"] > 0]
+    idx.to_parquet(C.DATA_DIR / "local_indices.parquet", index=False)
+    for t, g in idx.groupby("ticker"):
+        print(f"local_indices: {t} {len(g)} rows {g['date'].min().date()} .. {g['date'].max().date()}")
+
+
 def main() -> None:
     C.DATA_DIR.mkdir(parents=True, exist_ok=True)
     download_prices()
     download_fred(["DTB3", "DGS10", "DGS2", "DGS30", "T10Y2Y", "BAMLH0A0HYM2", "VIXCLS"])
     download_french()
     download_auctions()
+    download_local_indices()
 
 
 if __name__ == "__main__":
@@ -181,4 +200,5 @@ if __name__ == "__main__":
     else:
         for w in which:
             {"prices": download_prices, "french": download_french, "auctions": download_auctions,
+             "local": download_local_indices,
              "fred": lambda: download_fred(["DTB3", "DGS10", "DGS2", "DGS30", "T10Y2Y", "BAMLH0A0HYM2", "VIXCLS"])}[w]()

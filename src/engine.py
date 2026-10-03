@@ -386,6 +386,47 @@ def log_trial(res: BacktestResult, family: str, cost_mult: float, note: str = ""
         _append_csv(C.OOS_LOG, row)
 
 
+def log_trials_bulk(results: list[BacktestResult], family: str, cost_mult: float, note: str = "") -> None:
+    """Log many trials under one lock (used by the ensemble search, which runs ~1,400 configurations)."""
+    rows = []
+    git = _git_head()
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    for res in results:
+        params = json.dumps(res.params, sort_keys=True, default=str)
+        rows.append({
+            "utc": now, "family": family, "name": res.name, "period": res.period, "cost_mult": cost_mult,
+            "params_hash": hashlib.sha1(params.encode()).hexdigest()[:10], "params": params,
+            "sharpe": round(res.stats.get("sharpe", float("nan")), 4),
+            "ann_return": round(res.stats.get("ann_return", float("nan")), 5),
+            "max_drawdown": round(res.stats.get("max_drawdown", float("nan")), 4),
+            "turnover_per_year": round(res.stats.get("turnover_per_year", float("nan")), 2),
+            "n_days": len(res.returns), "git": git, "note": note,
+        })
+    if not rows:
+        return
+    for row in rows[:1]:
+        _append_csv(C.TRIALS_LOG, row)            # creates the header if needed, takes/release lock
+    lock = C.TRIALS_LOG.with_suffix(".csv.lock")
+    import time
+    while True:
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            time.sleep(0.1)
+    try:
+        with open(C.TRIALS_LOG, "a", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+            for row in rows[1:]:
+                w.writerow(row)
+    finally:
+        os.close(fd)
+        os.remove(lock)
+    if results and results[0].period in ("OOS", "FULL"):
+        for row in rows:
+            _append_csv(C.OOS_LOG, row)
+
+
 def trial_count(family: str | None = None, period: str = "IS", cost_mult: float = 1.0) -> tuple[int, float]:
     """Number of distinct in-sample variants tried (by params hash) and the variance of their annual Sharpe."""
     if not C.TRIALS_LOG.exists():
@@ -414,9 +455,10 @@ def run_backtest(
     cost_mult: float = 1.0,
     log: bool = True,
     note: str = "",
+    cost_bps: dict[str, float] | None = None,
 ) -> BacktestResult:
     start, end = eval_window(period)
-    net, gross, turnover, held, costs = simulate(w_dec, ohlc, rf, exec=exec, cost_mult=cost_mult)
+    net, gross, turnover, held, costs = simulate(w_dec, ohlc, rf, exec=exec, cost_mult=cost_mult, cost_bps=cost_bps)
     sl = slice(pd.Timestamp(start), pd.Timestamp(end))
     net, gross, turnover, held, costs = net.loc[sl], gross.loc[sl], turnover.loc[sl], held.loc[sl], costs.loc[sl]
     # drop the warm-up before the strategy first takes a position

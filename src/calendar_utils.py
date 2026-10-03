@@ -82,6 +82,43 @@ def equity_settlement_lag(T: pd.Timestamp) -> int:
     return 1
 
 
+# Unscheduled full-day NYSE closures, announced only days ahead (Ford funeral, Hurricane Sandy,
+# G.H.W. Bush and Carter days of mourning). A trader deciding before the announcement still expected
+# a session on these dates, so calendar offsets (T-j, A+j) are counted on the PLANNED calendar
+# (realised sessions plus these dates) and the resulting holdings are mapped back to real sessions.
+UNSCHEDULED_CLOSURES = pd.DatetimeIndex(["2007-01-02", "2012-10-29", "2012-10-30", "2018-12-05", "2025-01-09"])
+
+
+def planned_calendar(cal: pd.DatetimeIndex) -> pd.DatetimeIndex:
+    cal = pd.DatetimeIndex(cal)
+    u = UNSCHEDULED_CLOSURES[(UNSCHEDULED_CLOSURES > cal[0]) & (UNSCHEDULED_CLOSURES < cal[-1])]
+    return cal.union(u)
+
+
+def to_planned(prices):
+    """Reindex a price Series/DataFrame onto the planned calendar; closure days carry the last real
+    close (zero return), so nothing after a closure leaks into it."""
+    return prices.reindex(planned_calendar(prices.index)).ffill()
+
+
+def planned_to_realized(hold_planned: pd.DataFrame, cal_real: pd.DatetimeIndex) -> pd.DataFrame:
+    """Holdings per REAL return day from holdings per PLANNED return day.
+
+    The real return day t runs from the previous real close p to the close of t; the position over it
+    is the one the plan prescribes from the close of p, i.e. the planned hold of the first planned day
+    after p. A trade planned for a closure day's close is thus filled at the next real close (later,
+    never earlier, than planned). Without closures this is the identity.
+    """
+    cal_real = pd.DatetimeIndex(cal_real)
+    planned = hold_planned.index
+    vals = hold_planned.to_numpy()
+    out = np.empty((len(cal_real),) + vals.shape[1:])
+    out[0] = hold_planned.loc[cal_real[0]].to_numpy()
+    pos = planned.searchsorted(cal_real[:-1], side="right")
+    out[1:] = vals[pos]
+    return pd.DataFrame(out, index=cal_real, columns=hold_planned.columns)
+
+
 def hold_to_decision(hold: pd.DataFrame, exec: str = "next_close") -> pd.DataFrame:
     """Convert desired holdings per return day into engine decision weights.
 
