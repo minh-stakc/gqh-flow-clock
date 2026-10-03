@@ -44,7 +44,17 @@ TIER2 = {
 SHORT_BORROW_BPS_PER_YEAR = 30.0
 
 
+COST_BPS_FUTURES = 1.5   # default for CME futures; strategies pass their pre-registered map
+
+
+def is_future(ticker: str) -> bool:
+    """Databento futures: F_<root> (daily bars) or <root>16 (sampled at 16:00 ET)."""
+    return ticker.startswith("F_") or ticker.endswith("16")
+
+
 def cost_bps(ticker: str) -> float:
+    if is_future(ticker):
+        return COST_BPS_FUTURES
     if ticker in TIER1:
         return COST_BPS_TIER1
     if ticker in TIER2:

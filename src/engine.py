@@ -81,9 +81,25 @@ def _read_parquet(name: str) -> pd.DataFrame:
     return pd.read_parquet(path)
 
 
+FUTURES_FILES = ("futures_daily.parquet", "futures_1600.parquet")
+
+
 def load_ohlc(tickers: list[str] | None = None, period: str = "IS") -> dict[str, pd.DataFrame]:
-    """Total-return-adjusted daily OHLCV panels (dict of wide DataFrames), truncated to the period."""
-    df = _read_parquet("etf_daily.parquet")
+    """Total-return-adjusted daily OHLCV panels (dict of wide DataFrames), truncated to the period.
+
+    ETFs come from etf_daily.parquet. Futures (tickers ``F_<root>`` from daily bars and
+    ``<root>16`` sampled at 16:00 ET) come from the Databento-built files: their "close" is a fully
+    collateralised total-return index (futures excess return + T-bill), "volume" is dollar volume
+    divided by that index (so close*volume = dollar volume), and a "roll" panel flags roll days.
+    """
+    frames = [_read_parquet("etf_daily.parquet")]
+    for f in FUTURES_FILES:
+        if (C.DATA_DIR / f).exists():
+            frames.append(_read_parquet(f))
+    df = pd.concat(frames, ignore_index=True)
+    if "roll" not in df.columns:
+        df["roll"] = 0.0
+    df["roll"] = df["roll"].fillna(0.0)
     if tickers is not None:
         missing = sorted(set(tickers) - set(df["ticker"].unique()))
         if missing:
@@ -91,11 +107,23 @@ def load_ohlc(tickers: list[str] | None = None, period: str = "IS") -> dict[str,
         df = df[df["ticker"].isin(tickers)]
     end = pd.Timestamp(data_end(period))
     df = df[(df["date"] >= pd.Timestamp(C.HISTORY_START)) & (df["date"] <= end)]
+    # every panel lives on the NYSE trading calendar (SPY dates)
+    spy = _read_parquet("etf_daily.parquet")
+    cal = pd.DatetimeIndex(sorted(spy.loc[spy["ticker"] == "SPY", "date"].unique()))
+    cal = cal[(cal >= pd.Timestamp(C.HISTORY_START)) & (cal <= end)]
     out = {}
-    for col in ("open", "high", "low", "close", "volume"):
+    for col in ("open", "high", "low", "close", "volume", "roll"):
         wide = df.pivot(index="date", columns="ticker", values=col).sort_index()
+        wide = wide.reindex(index=cal)
         out[col] = wide if tickers is None else wide.reindex(columns=tickers)
     return out
+
+
+def trading_calendar(period: str = "IS") -> pd.DatetimeIndex:
+    """NYSE trading days (SPY dates) visible in the period."""
+    spy = _read_parquet("etf_daily.parquet")
+    cal = pd.DatetimeIndex(sorted(spy.loc[spy["ticker"] == "SPY", "date"].unique()))
+    return cal[(cal >= pd.Timestamp(C.HISTORY_START)) & (cal <= pd.Timestamp(data_end(period)))]
 
 
 def load_series(name: str, period: str = "IS") -> pd.DataFrame:
@@ -144,18 +172,19 @@ def simulate(
     next_close: the target decided at close d is traded at the close of d+1 and
       earns close-to-close returns from d+2 on.
     """
-    close = ohlc["close"]
     tickers = list(w_dec.columns)
-    close = close[tickers]
+    close = ohlc["close"][tickers].ffill(limit=5)        # bridge isolated missing prints only
     idx = close.index
     w_dec = w_dec.reindex(idx).ffill().fillna(0.0)
     rf = rf.reindex(idx).ffill().fillna(0.0)
     cb = pd.Series({t: (cost_bps or {}).get(t, C.cost_bps(t)) for t in tickers}) * cost_mult / 1e4
-    borrow_daily = C.SHORT_BORROW_BPS_PER_YEAR / 1e4 / C.TRADING_DAYS
+    borrow = pd.Series({t: 0.0 if C.is_future(t) else C.SHORT_BORROW_BPS_PER_YEAR for t in tickers}) / 1e4 / C.TRADING_DAYS
+    roll = ohlc.get("roll")
+    roll = roll[tickers].reindex(idx).fillna(0.0) if roll is not None else pd.DataFrame(0.0, index=idx, columns=tickers)
 
     r_cc = close.pct_change(fill_method=None).fillna(0.0)
     if exec == "next_open":
-        open_ = ohlc["open"][tickers]
+        open_ = ohlc["open"][tickers].ffill(limit=5)
         r_co = (open_ / close.shift(1) - 1).fillna(0.0)
         r_oc = (close / open_ - 1).fillna(0.0)
         w_new = w_dec.shift(1).fillna(0.0)     # traded at today's open
@@ -177,7 +206,10 @@ def simulate(
 
     cash_w = 1.0 - held.sum(axis=1)
     gross = gross_risky + cash_w * rf
-    costs = (trade * cb).sum(axis=1) + held.clip(upper=0).abs().sum(axis=1) * borrow_daily
+    # a futures roll is one extra round trip of the position held into the roll day
+    roll_trade = 2.0 * held.abs() * roll
+    trade = trade + roll_trade
+    costs = (trade * cb).sum(axis=1) + (held.clip(upper=0).abs() * borrow).sum(axis=1)
     net = gross - costs
     turnover = trade.sum(axis=1)
     return net, gross, turnover, held, costs
@@ -301,13 +333,34 @@ def _git_head() -> str:
 
 
 def _append_csv(path, row: dict) -> None:
+    """Append one row; a lock file serialises concurrent writers (parallel research runs)."""
+    import time
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    new = not path.exists()
-    with open(path, "a", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(row.keys()))
-        if new:
-            w.writeheader()
-        w.writerow(row)
+    lock = path.with_suffix(path.suffix + ".lock")
+    for _ in range(600):
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            if time.time() - os.path.getmtime(lock) > 120:   # stale lock from a crashed writer
+                try:
+                    os.remove(lock)
+                except OSError:
+                    pass
+            time.sleep(0.1)
+    else:
+        raise TimeoutError(f"could not lock {lock}")
+    try:
+        new = not path.exists()
+        with open(path, "a", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(row.keys()))
+            if new:
+                w.writeheader()
+            w.writerow(row)
+    finally:
+        os.close(fd)
+        os.remove(lock)
 
 
 def log_trial(res: BacktestResult, family: str, cost_mult: float, note: str = "") -> None:
