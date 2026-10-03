@@ -21,6 +21,28 @@ We take the position two to four days ahead of these flows and hand it to them a
 - **Out-of-sample:** both raw effects kept their sign but shrank. The rebalancing spread fell from 11.0 to 2.5 bp/day; the Treasury month-end IEF return fell from 7.2 to 3.0 bp/day. That was too small to cover costs, and gross Sharpe fell from 1.35 to 0.38. Only the trend leg made money.
 - **Everything else** (every stream, the replications, risk, capacity and the deviations from the pre-registration) is in the note.
 
+## Forward test (frozen 2026-10-03, before its data exists)
+
+The competition's out-of-sample window has been used, so the only honest test left is the future. [`FORWARD_TEST.md`](FORWARD_TEST.md) freezes three strategies, with git tag `forward-test-2026-10-03`:
+
+| Strategy | In-sample Sharpe | Out-of-sample Sharpe |
+|---|---|---|
+| F1: the submission, unchanged (primary) | 0.98 | −0.12 |
+| F2: its CME-futures implementation | 0.96 | −0.10 |
+| F3: information-discreteness trend on 20 futures | 0.43 | 0.06 |
+
+F2's history was computed only after the freeze, in a separate commit (`forward/historical_context.json`).
+
+- **Window and reporting:** only return days from **2026-10-06** count. Quarterly reports are committed whatever they show.
+- **Pass thresholds** are written down in advance (tiers at Sharpe 0.7 and 0; 24-month verdict), along with an honest power note: a two-year Sharpe has a standard error near 0.7.
+- **Frozen positions:** `forward/positions_for_2026-10-06.csv` holds the target positions for the first forward session, computed from data through 2026-10-02.
+
+To run the forward evaluation after refreshing the data:
+
+```bash
+python scripts/run_forward.py evaluate
+```
+
 ## How it was tested
 
 - **Hypothesis first.** [`HYPOTHESES.md`](HYPOTHESES.md) holds every window, sign, sizing rule, variant grid and the selection rule. It was committed before the first backtest (commit `d20c9d5`). Amendment 1 adds an ensemble search with overfitting tests (commit `06b22c9`). It was committed before the author read any in-sample result, though build agents had already logged 89 sleeve-level runs; see the `git` and `utc` columns of `results/trials.csv`.

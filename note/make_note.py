@@ -155,6 +155,13 @@ def macros() -> dict:
         dv = diag["median_dollar_volume_2019_2024"]
         m.update({"corrES": num(diag["corr_ES_SPY"], 3), "corrZN": num(diag["corr_ZN_IEF"], 3),
                   "dvIEF": f"{dv['IEF'] / 1e9:.1f}", "dvZN": f"{dv['ZN16'] / 1e9:.0f}", "dvES": f"{dv['ES16'] / 1e9:.0f}"})
+    fwd = C.ROOT / "forward" / "historical_context.json"
+    if fwd.exists():
+        fc = json.loads(fwd.read_text())["strategies"]
+        m["FtwoIS"] = num(fc["F2"]["in_sample"]["sharpe"])
+        m["FtwoOOS"] = num(fc["F2"]["out_of_sample"]["sharpe"])
+    else:
+        m["FtwoIS"] = m["FtwoOOS"] = "n/a"
     return m
 
 
