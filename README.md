@@ -37,9 +37,9 @@ python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\
 pip install -r requirements.txt
 python data/download.py                    # free data: Yahoo Finance, FRED, Ken French, Treasury Fiscal Data
 python data/download_databento.py          # optional: futures replication, needs DATABENTO_API_KEY (~$5 of usage)
-python run_all.py                          # in-sample: every strategy, the ensemble search, the selection
-GQH_OOS_UNLOCK=1 python run_all.py --final # out-of-sample evaluation of the committed selection
-python note/make_note.py                   # rebuilds the tables/figures of the note from results/
+python run_all.py                          # in-sample: every strategy, ensemble search, selection.json (~25 min)
+GQH_OOS_UNLOCK=1 python run_all.py --final # out-of-sample evaluation of the committed selection + diagnostics
+python note/make_note.py                   # regenerates note/numbers.tex + figures, compiles the PDF (pdflatex)
 ```
 
 Set `GQH_DATA_DIR` to keep the data cache elsewhere (default `data/cache/`, git-ignored). Copy

@@ -53,14 +53,17 @@ def in_sample(skip_modules: bool = False) -> None:
         importlib.import_module("scripts.run_pct_f").main()
     print("== FTE ensemble search")
     importlib.import_module("scripts.run_fte").main()
+    print("== selection (committed rule) -> results/selection.json")
+    importlib.import_module("scripts.select").main()
 
 
 def final_oos() -> None:
     if not E.oos_unlocked():
         raise SystemExit("set GQH_OOS_UNLOCK=1 to run the out-of-sample evaluation")
-    from scripts import run_oos
+    from scripts import diagnostics, run_oos
 
     run_oos.main()
+    diagnostics.main()   # post-hoc explanations only (event-time effects, rolling Sharpe, capacity)
 
 
 if __name__ == "__main__":
