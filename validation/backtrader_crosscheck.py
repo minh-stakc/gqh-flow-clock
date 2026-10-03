@@ -17,8 +17,11 @@ our numbers once the conventions match, and how do the kit's defaults change the
    gap to the official returns is split exactly into its components.
 5. Sharpe definitions: the kit's (daily total returns, rf = 0, population std) against ours (daily
    excess over the T-bill, sample std) for the submitted strategy, in and out of sample.
-6. The hacker guide's example costs: the section 4 replay with setcommission(0.0005) and
-   set_slippage_perc(0.0005), i.e. 5 bp commission plus 5 bp slippage per side on one netted book.
+6. The hacker guide's example costs, 5 bp commission plus 5 bp slippage per side, on the section 4
+   replay (one netted book). The slippage is charged as part of the commission (10 bp per side):
+   backtrader's set_slippage_perc does not slip bt.Order.Close fills at all, and with cheat-on-close
+   it caps the slip at the NEXT bar's high/low, which on gap days fills at a better price than the
+   signal close. An earlier version used the setter and overstated the result (kit Sharpe 0.95 / 0.19).
 
 Side effects: none outside results/validation/. We call ``engine.simulate`` and never
 ``engine.run_backtest``, so nothing is appended to results/trials.csv. Only the periods "IS" and "FWD"
@@ -540,16 +543,18 @@ def section4_5(sub: dict) -> tuple[dict, dict]:
 
 
 def section6(sub: dict) -> dict:
-    """F1 replayed in backtrader at the hacker guide's example costs (5 bp commission + 5 bp slippage)."""
+    """F1 replayed in backtrader at the hacker guide's example costs (5 bp commission + 5 bp slippage),
+    the slippage charged inside the commission (see the module docstring, section 6)."""
     W, ohlc, idx, fr = sub["W"], sub["ohlc"], sub["idx"], sub["fr"]
     rf = fr["rf"].reindex(idx)
-    r_bt, strat = replay(W, ohlc, {t: 5.0 for t in W.columns}, slip_perc=0.0005)
+    r_bt, strat = replay(W, ohlc, {t: 10.0 for t in W.columns})
     r_bt = r_bt.reindex(idx)
     Wi = W.reindex(idx)
     # our definition on the same book: pay the T-bill on net long notional (borrowed cash) and the borrow fee
     borrow = (Wi.clip(upper=0).abs() * C.SHORT_BORROW_BPS_PER_YEAR / 1e4 / TD).sum(axis=1)
     excess = r_bt - Wi.sum(axis=1) * rf - borrow
-    out = {"setup": "section 4 replay, setcommission(commission=0.0005) per ETF and set_slippage_perc(0.0005): "
+    out = {"setup": "section 4 replay, 5 bp commission + 5 bp slippage per side charged as setcommission(0.0010) "
+                    "(backtrader does not slip cheat-on-close fills correctly); "
                     "5 bp + 5 bp per side on the netted ETF trades",
            "replay_orders": int(strat.orders), "replay_orders_refused": int(strat.failed), "periods": {}}
     for name, w in (("IS_2006-05-08_2024-10-02", IS_WINDOW), ("OOS_2024-10-03_2026-10-02", OOS_WINDOW)):

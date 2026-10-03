@@ -1,0 +1,282 @@
+{
+  "meta": {
+    "harness": "validation/starter_kit/run_in_starter.py",
+    "strategy": "gqh_equity_trend",
+    "strategy_class": "EquityTrend",
+    "module": "validation/starter_kit/strategies/gqh_equity_trend.py",
+    "params": {},
+    "symbols": [
+      "F_ES",
+      "F_NQ",
+      "F_RTY",
+      "F_YM",
+      "F_ZT",
+      "F_ZF",
+      "F_ZN",
+      "F_ZB",
+      "F_UB",
+      "F_CL",
+      "F_HO",
+      "F_RB",
+      "F_NG",
+      "F_GC",
+      "F_SI",
+      "F_PL",
+      "F_HG",
+      "F_ZC",
+      "F_ZS",
+      "F_ZW",
+      "F_ZL",
+      "F_ZM",
+      "F_LE",
+      "F_HE",
+      "F_6E",
+      "F_6J",
+      "F_6B",
+      "F_6A",
+      "F_6C",
+      "F_6S"
+    ],
+    "start": "2010-06-07",
+    "end": "2026-10-02",
+    "is_start": "2011-09-02",
+    "costs": "project",
+    "cost_bps_per_side": {
+      "F_ES": 1.5,
+      "F_NQ": 1.5,
+      "F_RTY": 5.0,
+      "F_YM": 1.5,
+      "F_ZT": 1.5,
+      "F_ZF": 1.5,
+      "F_ZN": 1.5,
+      "F_ZB": 1.5,
+      "F_UB": 1.5,
+      "F_CL": 1.5,
+      "F_HO": 5.0,
+      "F_RB": 5.0,
+      "F_NG": 5.0,
+      "F_GC": 1.5,
+      "F_SI": 1.5,
+      "F_PL": 5.0,
+      "F_HG": 1.5,
+      "F_ZC": 5.0,
+      "F_ZS": 5.0,
+      "F_ZW": 5.0,
+      "F_ZL": 5.0,
+      "F_ZM": 5.0,
+      "F_LE": 5.0,
+      "F_HE": 5.0,
+      "F_6E": 1.5,
+      "F_6J": 1.5,
+      "F_6B": 1.5,
+      "F_6A": 5.0,
+      "F_6C": 5.0,
+      "F_6S": 1.5
+    },
+    "guide_slippage": 0.0,
+    "extra_costs": true,
+    "margin": true,
+    "leverage": 10.0,
+    "cash": 1000000000.0,
+    "exec": "next_close",
+    "cheat_on_close": false,
+    "checksubmit": false,
+    "backtrader_version": "1.9.78.123",
+    "kit": "gqh-webull-backtrader-starter",
+    "data_dir": "gqh",
+    "fwd_data_end": "2026-10-02",
+    "git_head": "4ea63fe",
+    "sharpe_definitions": {
+      "kit_sharpe_rf0": "mean / population std of daily backtrader returns x sqrt(252) (the kit's SharpeRatio analyzer); backtrader pays no interest on cash",
+      "our_sharpe_excess": "mean / sample std of (backtrader return - net weight held x T-bill) x sqrt(252): our definition, cash at the T-bill, borrowed cash paying it"
+    },
+    "runtime_s": 17.5,
+    "regenerated_by": "validation/starter_kit/run_all.py"
+  },
+  "kit_metrics": {
+    "starting_value": 1000000000.0,
+    "final_value": 1981275100.0,
+    "pnl": 981275110.0,
+    "pnl_pct": 98.127511,
+    "max_drawdown_pct": 19.010582,
+    "max_drawdown_money": 356968990.0,
+    "sharpe_ratio": 0.49011022,
+    "total_trades": 1700,
+    "won": 468,
+    "lost": 1202,
+    "win_rate": 27.529412,
+    "net_pnl": -415369060.0
+  },
+  "windows": {
+    "in_sample": {
+      "start": "2011-09-02",
+      "end": "2024-10-02",
+      "n_days": 3291,
+      "kit_sharpe_rf0": 0.5042565,
+      "our_sharpe_excess": 0.49618614,
+      "sharpe_total_sample_std": 0.50417989,
+      "ann_return": 0.046038548,
+      "ann_vol": 0.099023641,
+      "max_drawdown": -0.18252093,
+      "mean_tbill_ann": 0.012876907,
+      "mean_net_weight": 0.61121063,
+      "mean_gross_weight": 2.4912085,
+      "max_gross_weight": 3.1443976,
+      "turnover_per_year": 25.309797,
+      "orders": 96943,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0054621649
+    },
+    "out_of_sample": {
+      "start": "2024-10-03",
+      "end": "2026-10-02",
+      "n_days": 501,
+      "kit_sharpe_rf0": 0.55277725,
+      "our_sharpe_excess": 0.43723035,
+      "sharpe_total_sample_std": 0.55222531,
+      "ann_return": 0.049751022,
+      "ann_vol": 0.096308611,
+      "max_drawdown": -0.16012724,
+      "mean_tbill_ann": 0.039591816,
+      "mean_net_weight": 0.2642771,
+      "mean_gross_weight": 2.2096818,
+      "max_gross_weight": 3.0570816,
+      "turnover_per_year": 23.562815,
+      "orders": 15029,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0058557871
+    },
+    "full": {
+      "start": "2010-06-07",
+      "end": "2026-10-02",
+      "n_days": 4107,
+      "kit_sharpe_rf0": 0.49011022,
+      "our_sharpe_excess": 0.46910599,
+      "sharpe_total_sample_std": 0.49005055,
+      "ann_return": 0.042845888,
+      "ann_vol": 0.094800862,
+      "max_drawdown": -0.19010582,
+      "mean_tbill_ann": 0.015228415,
+      "mean_net_weight": 0.52201047,
+      "mean_gross_weight": 2.2657945,
+      "max_gross_weight": 3.1443976,
+      "turnover_per_year": 23.339315,
+      "orders": 112030,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0050912428
+    }
+  },
+  "orders": {
+    "total": 112030,
+    "completed": 112000,
+    "refused": 0,
+    "by_status": {
+      "Completed": 112000,
+      "Accepted": 30
+    }
+  },
+  "extra_costs_money": {
+    "roll": 118327160.0,
+    "borrow": 0.0,
+    "close_fill_slippage": 0.0,
+    "coc_slippage_correction": 0.0,
+    "open_fill_slippage_topup": 0.0
+  },
+  "reference": {
+    "path": "ref_s2_equity_trend_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99956694,
+          "mean_abs_diff_bp": 0.82753482,
+          "max_abs_diff_bp": 35.475057,
+          "tracking_diff_ann": -0.00072849277,
+          "n_days": 3291
+        },
+        "reference_kit_sharpe_rf0": 0.63335923,
+        "reference_ann_return": 0.059505562,
+        "reference_max_drawdown": -0.15431198,
+        "reference_our_sharpe_excess": 0.50318779
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99959949,
+          "mean_abs_diff_bp": 0.84595839,
+          "max_abs_diff_bp": 13.484482,
+          "tracking_diff_ann": -0.0025907567,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 0.87339085,
+        "reference_ann_return": 0.082897978,
+        "reference_max_drawdown": -0.14936486,
+        "reference_our_sharpe_excess": 0.46275242
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99956949,
+          "mean_abs_diff_bp": 0.76777073,
+          "max_abs_diff_bp": 35.475057,
+          "tracking_diff_ann": -0.00093655721,
+          "n_days": 4107
+        },
+        "reference_kit_sharpe_rf0": 0.63916332,
+        "reference_ann_return": 0.057717497,
+        "reference_max_drawdown": -0.15431198,
+        "reference_our_sharpe_excess": 0.47851286
+      }
+    },
+    "role": "official engine return (project costs)"
+  },
+  "reference_same_costs": {
+    "path": "ref_s2_equity_trend_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99956694,
+          "mean_abs_diff_bp": 0.82753482,
+          "max_abs_diff_bp": 35.475057,
+          "tracking_diff_ann": -0.00072849277,
+          "n_days": 3291
+        },
+        "reference_kit_sharpe_rf0": 0.63335923,
+        "reference_ann_return": 0.059505562,
+        "reference_max_drawdown": -0.15431198,
+        "reference_our_sharpe_excess": 0.50318779
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99959949,
+          "mean_abs_diff_bp": 0.84595839,
+          "max_abs_diff_bp": 13.484482,
+          "tracking_diff_ann": -0.0025907567,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 0.87339085,
+        "reference_ann_return": 0.082897978,
+        "reference_max_drawdown": -0.14936486,
+        "reference_our_sharpe_excess": 0.46275242
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99956949,
+          "mean_abs_diff_bp": 0.76777073,
+          "max_abs_diff_bp": 35.475057,
+          "tracking_diff_ann": -0.00093655721,
+          "n_days": 4107
+        },
+        "reference_kit_sharpe_rf0": 0.63916332,
+        "reference_ann_return": 0.057717497,
+        "reference_max_drawdown": -0.15431198,
+        "reference_our_sharpe_excess": 0.47851286
+      }
+    },
+    "role": "official engine return (project costs)"
+  }
+}

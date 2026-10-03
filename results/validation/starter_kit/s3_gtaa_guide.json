@@ -1,0 +1,236 @@
+{
+  "meta": {
+    "harness": "validation/starter_kit/run_in_starter.py",
+    "strategy": "gqh_gtaa",
+    "strategy_class": "FaberGTAA",
+    "module": "validation/starter_kit/strategies/gqh_gtaa.py",
+    "params": {},
+    "symbols": [
+      "SPY",
+      "EFA",
+      "IEF",
+      "VNQ",
+      "DBC"
+    ],
+    "start": "2005-01-03",
+    "end": "2026-10-02",
+    "is_start": "2005-11-01",
+    "costs": "guide",
+    "cost_bps_per_side": {
+      "SPY": 10.0,
+      "EFA": 10.0,
+      "IEF": 10.0,
+      "VNQ": 10.0,
+      "DBC": 10.0
+    },
+    "guide_slippage": 0.0005,
+    "extra_costs": true,
+    "margin": false,
+    "leverage": 1.0,
+    "cash": 1000000000.0,
+    "exec": "next_open",
+    "cheat_on_close": false,
+    "checksubmit": true,
+    "backtrader_version": "1.9.78.123",
+    "kit": "gqh-webull-backtrader-starter",
+    "data_dir": "gqh",
+    "fwd_data_end": "2026-10-02",
+    "git_head": "4ea63fe",
+    "sharpe_definitions": {
+      "kit_sharpe_rf0": "mean / population std of daily backtrader returns x sqrt(252) (the kit's SharpeRatio analyzer); backtrader pays no interest on cash",
+      "our_sharpe_excess": "mean / sample std of (backtrader return - net weight held x T-bill) x sqrt(252): our definition, cash at the T-bill, borrowed cash paying it"
+    },
+    "runtime_s": 4.1,
+    "report": {
+      "bytes": 5888200,
+      "location": "work folder only (over 5 MB)"
+    },
+    "regenerated_by": "validation/starter_kit/run_all.py"
+  },
+  "kit_metrics": {
+    "starting_value": 1000000000.0,
+    "final_value": 2744246200.0,
+    "pnl": 1744246200.0,
+    "pnl_pct": 174.42462,
+    "max_drawdown_pct": 15.919049,
+    "max_drawdown_money": 217956880.0,
+    "sharpe_ratio": 0.63848846,
+    "total_trades": 96,
+    "won": 40,
+    "lost": 53,
+    "win_rate": 41.666667,
+    "net_pnl": 1303780800.0
+  },
+  "windows": {
+    "in_sample": {
+      "start": "2005-11-01",
+      "end": "2024-10-02",
+      "n_days": 4761,
+      "kit_sharpe_rf0": 0.60847961,
+      "our_sharpe_excess": 0.48523086,
+      "sharpe_total_sample_std": 0.6084157,
+      "ann_return": 0.046569662,
+      "ann_vol": 0.080100144,
+      "max_drawdown": -0.15919049,
+      "mean_tbill_ann": 0.01493327,
+      "mean_net_weight": 0.65521739,
+      "mean_gross_weight": 0.65521739,
+      "max_gross_weight": 0.99000014,
+      "turnover_per_year": 2.6261919,
+      "orders": 15839,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 5.9679484e-05
+    },
+    "out_of_sample": {
+      "start": "2024-10-03",
+      "end": "2026-10-02",
+      "n_days": 501,
+      "kit_sharpe_rf0": 1.132358,
+      "our_sharpe_excess": 0.6735602,
+      "sharpe_total_sample_std": 1.1312274,
+      "ann_return": 0.078121376,
+      "ann_vol": 0.068580772,
+      "max_drawdown": -0.064020499,
+      "mean_tbill_ann": 0.039591816,
+      "mean_net_weight": 0.79990419,
+      "mean_gross_weight": 0.79990419,
+      "max_gross_weight": 0.99000016,
+      "turnover_per_year": 2.766961,
+      "orders": 2032,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 3.2908439e-05
+    },
+    "full": {
+      "start": "2005-01-03",
+      "end": "2026-10-02",
+      "n_days": 5472,
+      "kit_sharpe_rf0": 0.63848846,
+      "our_sharpe_excess": 0.49067341,
+      "sharpe_total_sample_std": 0.63843011,
+      "ann_return": 0.047588052,
+      "ann_vol": 0.07754174,
+      "max_drawdown": -0.15919049,
+      "mean_tbill_ann": 0.017771985,
+      "mean_net_weight": 0.64331908,
+      "mean_gross_weight": 0.64331908,
+      "max_gross_weight": 0.99000016,
+      "turnover_per_year": 2.5382944,
+      "orders": 17874,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 5.4938076e-05
+    }
+  },
+  "orders": {
+    "total": 17874,
+    "completed": 17871,
+    "refused": 0,
+    "by_status": {
+      "Completed": 17871,
+      "Submitted": 3
+    }
+  },
+  "extra_costs_money": {
+    "roll": 0.0,
+    "borrow": 0.0,
+    "close_fill_slippage": 0.0,
+    "coc_slippage_correction": 0.0,
+    "open_fill_slippage_topup": 1989166.1
+  },
+  "reference": {
+    "path": "ref_s3_gtaa_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99994355,
+          "mean_abs_diff_bp": 0.44295426,
+          "max_abs_diff_bp": 11.228183,
+          "tracking_diff_ann": -0.0024776515,
+          "n_days": 4761
+        },
+        "reference_kit_sharpe_rf0": 0.6950307,
+        "reference_ann_return": 0.054416947,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51055528
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99992595,
+          "mean_abs_diff_bp": 0.47085865,
+          "max_abs_diff_bp": 6.4626961,
+          "tracking_diff_ann": -0.0023722637,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 1.2725324,
+        "reference_ann_return": 0.089526696,
+        "reference_max_drawdown": -0.063882473,
+        "reference_our_sharpe_excess": 0.70024392
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99994224,
+          "mean_abs_diff_bp": 0.42850976,
+          "max_abs_diff_bp": 11.228183,
+          "tracking_diff_ann": -0.0023729172,
+          "n_days": 5472
+        },
+        "reference_kit_sharpe_rf0": 0.74236589,
+        "reference_ann_return": 0.056654193,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51560093
+      }
+    },
+    "role": "official engine return (project costs)"
+  },
+  "reference_same_costs": {
+    "path": "ref_s3_gtaa_guide.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99996126,
+          "mean_abs_diff_bp": 0.40556021,
+          "max_abs_diff_bp": 11.264084,
+          "tracking_diff_ann": -0.0010436196,
+          "n_days": 4761
+        },
+        "reference_kit_sharpe_rf0": 0.6773428,
+        "reference_ann_return": 0.052906469,
+        "reference_max_drawdown": -0.15801641,
+        "reference_our_sharpe_excess": 0.49286259
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99994246,
+          "mean_abs_diff_bp": 0.43944565,
+          "max_abs_diff_bp": 6.5569961,
+          "tracking_diff_ann": -0.00087701947,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 1.2506677,
+        "reference_ann_return": 0.087898175,
+        "reference_max_drawdown": -0.064319633,
+        "reference_our_sharpe_excess": 0.67853282
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.9999599,
+          "mean_abs_diff_bp": 0.39309839,
+          "max_abs_diff_bp": 11.264084,
+          "tracking_diff_ann": -0.00098831501,
+          "n_days": 5472
+        },
+        "reference_kit_sharpe_rf0": 0.72471343,
+        "reference_ann_return": 0.055192546,
+        "reference_max_drawdown": -0.15801641,
+        "reference_our_sharpe_excess": 0.49794608
+      }
+    },
+    "role": "engine on the same decisions at 10 bp one way"
+  }
+}

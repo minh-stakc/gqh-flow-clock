@@ -1,0 +1,289 @@
+{
+  "meta": {
+    "harness": "validation/starter_kit/run_in_starter.py",
+    "strategy": "gqh_flow_clock",
+    "strategy_class": "FlowClock",
+    "module": "validation/starter_kit/strategies/gqh_flow_clock.py",
+    "params": {
+      "dump": "f1_flow_clock_project_dump.csv"
+    },
+    "symbols": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "EFA",
+      "EEM",
+      "TLT",
+      "IEF",
+      "LQD",
+      "HYG",
+      "TIP",
+      "GLD",
+      "SLV",
+      "DBC",
+      "UUP",
+      "VNQ"
+    ],
+    "start": "2005-01-03",
+    "end": "2026-10-02",
+    "is_start": "2006-05-08",
+    "costs": "project",
+    "cost_bps_per_side": {
+      "SPY": 3.0,
+      "QQQ": 3.0,
+      "IWM": 3.0,
+      "EFA": 3.0,
+      "EEM": 3.0,
+      "TLT": 3.0,
+      "IEF": 3.0,
+      "LQD": 3.0,
+      "HYG": 3.0,
+      "TIP": 5.0,
+      "GLD": 3.0,
+      "SLV": 5.0,
+      "DBC": 5.0,
+      "UUP": 5.0,
+      "VNQ": 5.0
+    },
+    "guide_slippage": 0.0,
+    "extra_costs": true,
+    "margin": true,
+    "leverage": 10.0,
+    "cash": 1000000000.0,
+    "exec": "mixed",
+    "cheat_on_close": false,
+    "checksubmit": false,
+    "backtrader_version": "1.9.78.123",
+    "kit": "gqh-webull-backtrader-starter",
+    "data_dir": "gqh",
+    "fwd_data_end": "2026-10-02",
+    "git_head": "4ea63fe",
+    "sharpe_definitions": {
+      "kit_sharpe_rf0": "mean / population std of daily backtrader returns x sqrt(252) (the kit's SharpeRatio analyzer); backtrader pays no interest on cash",
+      "our_sharpe_excess": "mean / sample std of (backtrader return - net weight held x T-bill) x sqrt(252): our definition, cash at the T-bill, borrowed cash paying it"
+    },
+    "runtime_s": 18.3,
+    "regenerated_by": "validation/starter_kit/run_all.py"
+  },
+  "kit_metrics": {
+    "starting_value": 1000000000.0,
+    "final_value": 4514676000.0,
+    "pnl": 3514676000.0,
+    "pnl_pct": 351.4676,
+    "max_drawdown_pct": 11.679423,
+    "max_drawdown_money": 450015880.0,
+    "sharpe_ratio": 0.99359042,
+    "total_trades": 1006,
+    "won": 490,
+    "lost": 501,
+    "win_rate": 48.707753,
+    "net_pnl": 3194850800.0
+  },
+  "windows": {
+    "in_sample": {
+      "start": "2006-05-08",
+      "end": "2024-10-02",
+      "n_days": 4633,
+      "kit_sharpe_rf0": 1.0927907,
+      "our_sharpe_excess": 1.0196893,
+      "sharpe_total_sample_std": 1.0926728,
+      "ann_return": 0.083228941,
+      "ann_vol": 0.07579669,
+      "max_drawdown": -0.11679423,
+      "mean_tbill_ann": 0.014165551,
+      "mean_net_weight": 0.48599518,
+      "mean_gross_weight": 0.90292433,
+      "max_gross_weight": 4.0860861,
+      "turnover_per_year": 81.564241,
+      "orders": 126190,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.00062510714
+    },
+    "out_of_sample": {
+      "start": "2024-10-03",
+      "end": "2026-10-02",
+      "n_days": 501,
+      "kit_sharpe_rf0": 0.3211291,
+      "our_sharpe_excess": -0.058889856,
+      "sharpe_total_sample_std": 0.32080845,
+      "ann_return": 0.019054768,
+      "ann_vol": 0.065501508,
+      "max_drawdown": -0.090729886,
+      "mean_tbill_ann": 0.039591816,
+      "mean_net_weight": 0.62815647,
+      "mean_gross_weight": 1.1097898,
+      "max_gross_weight": 4.0182361,
+      "turnover_per_year": 96.01895,
+      "orders": 14185,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.00072253461
+    },
+    "full": {
+      "start": "2005-01-03",
+      "end": "2026-10-02",
+      "n_days": 5472,
+      "kit_sharpe_rf0": 0.99359042,
+      "our_sharpe_excess": 0.89739238,
+      "sharpe_total_sample_std": 0.99349963,
+      "ann_return": 0.071882738,
+      "ann_vol": 0.072517689,
+      "max_drawdown": -0.11679423,
+      "mean_tbill_ann": 0.017771985,
+      "mean_net_weight": 0.4689916,
+      "mean_gross_weight": 0.86609157,
+      "max_gross_weight": 4.0860861,
+      "turnover_per_year": 77.849529,
+      "orders": 140375,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.00059541506
+    }
+  },
+  "orders": {
+    "total": 140375,
+    "completed": 140345,
+    "refused": 0,
+    "by_status": {
+      "Completed": 140345,
+      "Accepted": 30
+    }
+  },
+  "extra_costs_money": {
+    "roll": 0.0,
+    "borrow": 36090115.0,
+    "close_fill_slippage": 0.0,
+    "coc_slippage_correction": 0.0,
+    "open_fill_slippage_topup": 0.0
+  },
+  "reference": {
+    "path": "ref_f1_flow_clock_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99624424,
+          "mean_abs_diff_bp": 1.9852698,
+          "max_abs_diff_bp": 53.01126,
+          "tracking_diff_ann": 0.0024663423,
+          "n_days": 4633
+        },
+        "reference_kit_sharpe_rf0": 1.171248,
+        "reference_ann_return": 0.089753053,
+        "reference_max_drawdown": -0.11670703,
+        "reference_our_sharpe_excess": 0.98448491
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99386736,
+          "mean_abs_diff_bp": 2.3451558,
+          "max_abs_diff_bp": 14.890272,
+          "tracking_diff_ann": 0.0041525251,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 0.47985458,
+        "reference_ann_return": 0.029857431,
+        "reference_max_drawdown": -0.086697373,
+        "reference_our_sharpe_excess": -0.12152013
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.9960669,
+          "mean_abs_diff_bp": 2.0203892,
+          "max_abs_diff_bp": 53.01126,
+          "tracking_diff_ann": 0.002630888,
+          "n_days": 5134
+        },
+        "reference_kit_sharpe_rf0": 1.1109377,
+        "reference_ann_return": 0.083757942,
+        "reference_max_drawdown": -0.11670703,
+        "reference_our_sharpe_excess": 0.88870626
+      }
+    },
+    "role": "official engine return (project costs)"
+  },
+  "reference_same_costs": {
+    "path": "ref_f1_flow_clock_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99624424,
+          "mean_abs_diff_bp": 1.9852698,
+          "max_abs_diff_bp": 53.01126,
+          "tracking_diff_ann": 0.0024663423,
+          "n_days": 4633
+        },
+        "reference_kit_sharpe_rf0": 1.171248,
+        "reference_ann_return": 0.089753053,
+        "reference_max_drawdown": -0.11670703,
+        "reference_our_sharpe_excess": 0.98448491
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99386736,
+          "mean_abs_diff_bp": 2.3451558,
+          "max_abs_diff_bp": 14.890272,
+          "tracking_diff_ann": 0.0041525251,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 0.47985458,
+        "reference_ann_return": 0.029857431,
+        "reference_max_drawdown": -0.086697373,
+        "reference_our_sharpe_excess": -0.12152013
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.9960669,
+          "mean_abs_diff_bp": 2.0203892,
+          "max_abs_diff_bp": 53.01126,
+          "tracking_diff_ann": 0.002630888,
+          "n_days": 5134
+        },
+        "reference_kit_sharpe_rf0": 1.1109377,
+        "reference_ann_return": 0.083757942,
+        "reference_max_drawdown": -0.11670703,
+        "reference_our_sharpe_excess": 0.88870626
+      }
+    },
+    "role": "official engine return (project costs)"
+  },
+  "aligned_close_fill_costs": {
+    "note": "close-fill commission (and the guide slippage debited for it) moved one session later, to the engine's booking day; nothing else changes",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99971014,
+          "mean_abs_diff_bp": 0.29149006,
+          "max_abs_diff_bp": 42.957234,
+          "tracking_diff_ann": 0.0024828451,
+          "n_days": 4633
+        },
+        "our_sharpe_excess": 1.017916
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99977547,
+          "mean_abs_diff_bp": 0.29230481,
+          "max_abs_diff_bp": 7.2498722,
+          "tracking_diff_ann": 0.0041435498,
+          "n_days": 501
+        },
+        "our_sharpe_excess": -0.05871951
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99971506,
+          "mean_abs_diff_bp": 0.29156957,
+          "max_abs_diff_bp": 42.957234,
+          "tracking_diff_ann": 0.0026449045,
+          "n_days": 5134
+        },
+        "our_sharpe_excess": 0.89560309
+      }
+    }
+  }
+}

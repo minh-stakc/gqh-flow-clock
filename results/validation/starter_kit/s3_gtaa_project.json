@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "harness": "validation/starter_kit/run_in_starter.py",
+    "strategy": "gqh_gtaa",
+    "strategy_class": "FaberGTAA",
+    "module": "validation/starter_kit/strategies/gqh_gtaa.py",
+    "params": {},
+    "symbols": [
+      "SPY",
+      "EFA",
+      "IEF",
+      "VNQ",
+      "DBC"
+    ],
+    "start": "2005-01-03",
+    "end": "2026-10-02",
+    "is_start": "2005-11-01",
+    "costs": "project",
+    "cost_bps_per_side": {
+      "SPY": 3.0,
+      "EFA": 3.0,
+      "IEF": 3.0,
+      "VNQ": 5.0,
+      "DBC": 5.0
+    },
+    "guide_slippage": 0.0,
+    "extra_costs": true,
+    "margin": false,
+    "leverage": 1.0,
+    "cash": 1000000000.0,
+    "exec": "next_open",
+    "cheat_on_close": false,
+    "checksubmit": true,
+    "backtrader_version": "1.9.78.123",
+    "kit": "gqh-webull-backtrader-starter",
+    "data_dir": "gqh",
+    "fwd_data_end": "2026-10-02",
+    "git_head": "4ea63fe",
+    "sharpe_definitions": {
+      "kit_sharpe_rf0": "mean / population std of daily backtrader returns x sqrt(252) (the kit's SharpeRatio analyzer); backtrader pays no interest on cash",
+      "our_sharpe_excess": "mean / sample std of (backtrader return - net weight held x T-bill) x sqrt(252): our definition, cash at the T-bill, borrowed cash paying it"
+    },
+    "runtime_s": 3.9,
+    "regenerated_by": "validation/starter_kit/run_all.py"
+  },
+  "kit_metrics": {
+    "starting_value": 1000000000.0,
+    "final_value": 2838910900.0,
+    "pnl": 1838910900.0,
+    "pnl_pct": 183.89109,
+    "max_drawdown_pct": 15.859637,
+    "max_drawdown_money": 217856880.0,
+    "sharpe_ratio": 0.65860961,
+    "total_trades": 96,
+    "won": 40,
+    "lost": 53,
+    "win_rate": 41.666667,
+    "net_pnl": 1379128400.0
+  },
+  "windows": {
+    "in_sample": {
+      "start": "2005-11-01",
+      "end": "2024-10-02",
+      "n_days": 4761,
+      "kit_sharpe_rf0": 0.62866154,
+      "our_sharpe_excess": 0.50541894,
+      "sharpe_total_sample_std": 0.62859551,
+      "ann_return": 0.048265259,
+      "ann_vol": 0.080105051,
+      "max_drawdown": -0.15859637,
+      "mean_tbill_ann": 0.01493327,
+      "mean_net_weight": 0.65521739,
+      "mean_gross_weight": 0.65521739,
+      "max_gross_weight": 0.99000014,
+      "turnover_per_year": 2.6260367,
+      "orders": 15840,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0
+    },
+    "out_of_sample": {
+      "start": "2024-10-03",
+      "end": "2026-10-02",
+      "n_days": 501,
+      "kit_sharpe_rf0": 1.1570316,
+      "our_sharpe_excess": 0.69811311,
+      "sharpe_total_sample_std": 1.1558763,
+      "ann_return": 0.079928501,
+      "ann_vol": 0.06856683,
+      "max_drawdown": -0.063558707,
+      "mean_tbill_ann": 0.039591816,
+      "mean_net_weight": 0.79990418,
+      "mean_gross_weight": 0.79990418,
+      "max_gross_weight": 0.99000015,
+      "turnover_per_year": 2.7670231,
+      "orders": 2032,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0
+    },
+    "full": {
+      "start": "2005-01-03",
+      "end": "2026-10-02",
+      "n_days": 5472,
+      "kit_sharpe_rf0": 0.65860961,
+      "our_sharpe_excess": 0.51080078,
+      "sharpe_total_sample_std": 0.65854943,
+      "ann_return": 0.049225487,
+      "ann_vol": 0.077545191,
+      "max_drawdown": -0.15859637,
+      "mean_tbill_ann": 0.017771985,
+      "mean_net_weight": 0.64331908,
+      "mean_gross_weight": 0.64331908,
+      "max_gross_weight": 0.99000015,
+      "turnover_per_year": 2.5381651,
+      "orders": 17875,
+      "refused_orders": 0,
+      "canceled_orders": 0,
+      "extra_costs_ann": 0.0
+    }
+  },
+  "orders": {
+    "total": 17875,
+    "completed": 17872,
+    "refused": 0,
+    "by_status": {
+      "Completed": 17872,
+      "Submitted": 3
+    }
+  },
+  "extra_costs_money": {
+    "roll": 0.0,
+    "borrow": 0.0,
+    "close_fill_slippage": 0.0,
+    "coc_slippage_correction": 0.0,
+    "open_fill_slippage_topup": 0.0
+  },
+  "reference": {
+    "path": "ref_s3_gtaa_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99996147,
+          "mean_abs_diff_bp": 0.40379391,
+          "max_abs_diff_bp": 11.294252,
+          "tracking_diff_ann": -0.00085816154,
+          "n_days": 4761
+        },
+        "reference_kit_sharpe_rf0": 0.6950307,
+        "reference_ann_return": 0.054416947,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51055528
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99994282,
+          "mean_abs_diff_bp": 0.43665791,
+          "max_abs_diff_bp": 6.5351183,
+          "tracking_diff_ann": -0.00069793817,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 1.2725324,
+        "reference_ann_return": 0.089526696,
+        "reference_max_drawdown": -0.063882473,
+        "reference_our_sharpe_excess": 0.70024392
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99996012,
+          "mean_abs_diff_bp": 0.39130636,
+          "max_abs_diff_bp": 11.294252,
+          "tracking_diff_ann": -0.00081055814,
+          "n_days": 5472
+        },
+        "reference_kit_sharpe_rf0": 0.74236589,
+        "reference_ann_return": 0.056654193,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51560093
+      }
+    },
+    "role": "official engine return (project costs)"
+  },
+  "reference_same_costs": {
+    "path": "ref_s3_gtaa_official.csv",
+    "column": "ret",
+    "rf_mode": "tbill",
+    "windows": {
+      "in_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99996147,
+          "mean_abs_diff_bp": 0.40379391,
+          "max_abs_diff_bp": 11.294252,
+          "tracking_diff_ann": -0.00085816154,
+          "n_days": 4761
+        },
+        "reference_kit_sharpe_rf0": 0.6950307,
+        "reference_ann_return": 0.054416947,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51055528
+      },
+      "out_of_sample": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99994282,
+          "mean_abs_diff_bp": 0.43665791,
+          "max_abs_diff_bp": 6.5351183,
+          "tracking_diff_ann": -0.00069793817,
+          "n_days": 501
+        },
+        "reference_kit_sharpe_rf0": 1.2725324,
+        "reference_ann_return": 0.089526696,
+        "reference_max_drawdown": -0.063882473,
+        "reference_our_sharpe_excess": 0.70024392
+      },
+      "full": {
+        "agreement_bt_minus_reference": {
+          "corr": 0.99996012,
+          "mean_abs_diff_bp": 0.39130636,
+          "max_abs_diff_bp": 11.294252,
+          "tracking_diff_ann": -0.00081055814,
+          "n_days": 5472
+        },
+        "reference_kit_sharpe_rf0": 0.74236589,
+        "reference_ann_return": 0.056654193,
+        "reference_max_drawdown": -0.15756684,
+        "reference_our_sharpe_excess": 0.51560093
+      }
+    },
+    "role": "official engine return (project costs)"
+  }
+}

@@ -20,7 +20,8 @@ We take the position two to four days ahead of these flows and hand it to them a
 - **Overfitting:** PBO is 0.023 over 1,404 ensemble configurations. The Deflated Sharpe under the pre-registered trial count is 0.40, so the in-sample Sharpe is not statistically significant after the search.
 - **Out-of-sample:** both raw effects kept their sign but shrank. The rebalancing spread fell from 11.0 to 2.5 bp/day; the Treasury month-end IEF return fell from 7.2 to 3.0 bp/day. That was too small to cover costs, and gross Sharpe fell from 1.35 to 0.38. Only the trend leg made money.
 - **By year out-of-sample:** 0.33 (Q4 2024), 1.12 (2025), −1.99 (2026 to date). With data starting in 2017 the 20% rule sets the split instead, and the same strategy gives 0.93 in-sample and −0.09 out-of-sample (`scripts/oos_by_year.py`).
-- **Organisers' starter cross-check:** the backtrader starter matches our engine on identical weights to 0.0006 bp a day. As one netted book at the hacker guide's example cost (5 bp commission plus 5 bp slippage per side) the strategy gives 0.86 in-sample and −0.19 out-of-sample. The starter's own Sharpe (total returns, risk-free rate 0) would show 1.17 and 0.48 for our returns, because it counts T-bill interest as return (`validation/backtrader_crosscheck.py`, `results/validation/`).
+- **Organisers' starter cross-check:** the backtrader starter matches our engine on identical weights to 0.0006 bp a day. As one netted book at the hacker guide's example cost (5 bp commission plus 5 bp slippage per side) the strategy gives 0.28 in-sample and −1.05 out-of-sample: the edge does not survive retail-style costs at about 90x annual turnover. The starter's own Sharpe (total returns, risk-free rate 0) would show 1.17 and 0.48 for our returns, because it counts T-bill interest as return (`validation/backtrader_crosscheck.py`, `results/validation/`).
+- **Native runs in the starter kit:** the submission, S2, S3 and BH5 were re-implemented as kit strategies that compute their own signals inside backtrader and run through the kit's own `main.py` code, with only the Webull data feed swapped for our cache. They reproduce our engine's decisions exactly (submission at our costs: 1.02 in-sample, −0.06 out-of-sample; S3 0.51 / 0.70). See `validation/starter_kit/README.md` and `results/validation/starter_kit/SUMMARY.md`; regenerate with `python validation/starter_kit/run_all.py`.
 - **Everything else** (every stream, the replications, risk, capacity and the deviations from the pre-registration) is in the note.
 
 ## Forward test (frozen 2026-10-03, before its data exists)
@@ -182,7 +183,8 @@ scripts/                 per-module runners, ensemble search, selection, out-of-
 tests/                   lookahead perturbation test (strategy modules and forward test 2)
 src/forward.py, forward2.py   frozen forward tests 1 and 2; scripts/run_forward*.py run them; forward/ holds positions,
                          post-freeze history and (later) the quarterly reports
-validation/              cross-check against the organisers' backtrader starter kit
+validation/              cross-check against the organisers' backtrader starter kit; starter_kit/ runs our
+                         strategies natively inside the kit (kit code imported at runtime, not copied)
 data/                    download scripts only (no data)
 results/                 every number in the note (in-sample, out-of-sample, trial log, diagnostics)
 note/                    quant note source, generated numbers and figures, PDF

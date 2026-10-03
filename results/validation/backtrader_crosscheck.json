@@ -5,9 +5,9 @@
     "pandas_version": "3.0.6",
     "data_dir": "gqh",
     "fwd_data_end": "2026-10-02",
-    "git_head": "19df147",
+    "git_head": "4ea63fe",
     "kit": "gqh-webull-backtrader-starter",
-    "runtime_s": 21.0
+    "runtime_s": 21.1
   },
   "1_as_shipped": {
     "setup": "kit DualMovingAverageStrategy (5/20 SMA), SPY 2005-01-03..2024-10-02, cash 100000, FixedSize stake 10, default broker (no commission, fills at next open), runonce=False",
@@ -435,27 +435,27 @@
     }
   },
   "6_guide_example_costs": {
-    "setup": "section 4 replay, setcommission(commission=0.0005) per ETF and set_slippage_perc(0.0005): 5 bp + 5 bp per side on the netted ETF trades",
-    "replay_orders": 72919,
+    "setup": "section 4 replay, 5 bp commission + 5 bp slippage per side charged as setcommission(0.0010) (backtrader does not slip cheat-on-close fills correctly); 5 bp + 5 bp per side on the netted ETF trades",
+    "replay_orders": 72916,
     "replay_orders_refused": 0,
     "periods": {
       "IS_2006-05-08_2024-10-02": {
-        "ann_return": 0.070067984,
-        "ann_vol": 0.074467212,
-        "sharpe_rf0": 0.94661757,
-        "max_drawdown": -0.12144875,
+        "ann_return": 0.025417044,
+        "ann_vol": 0.076662926,
+        "sharpe_rf0": 0.36564167,
+        "max_drawdown": -0.17461339,
         "n_days": 4633,
-        "sharpe_starter": 0.94671975,
-        "sharpe_ours_excess_financed": 0.86347048
+        "sharpe_starter": 0.36568114,
+        "sharpe_ours_excess_financed": 0.28370636
       },
       "OOS_2024-10-03_2026-10-02": {
-        "ann_return": 0.010582763,
-        "ann_vol": 0.068040404,
-        "sharpe_rf0": 0.18857018,
-        "max_drawdown": -0.09646375,
+        "ann_return": -0.046767095,
+        "ann_vol": 0.067923486,
+        "sharpe_rf0": -0.67119827,
+        "max_drawdown": -0.14554327,
         "n_days": 501,
-        "sharpe_starter": 0.18875866,
-        "sharpe_ours_excess_financed": -0.18744351
+        "sharpe_starter": -0.67186913,
+        "sharpe_ours_excess_financed": -1.0475696
       }
     }
   }
