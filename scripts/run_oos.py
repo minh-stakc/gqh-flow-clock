@@ -77,6 +77,19 @@ def main() -> None:
         summary[tag] = {"stats": r.stats, "stats_2x": r2.stats, "factor_to_2026_08": AN.factor_table(r, "OOS")}
         curves[tag] = r.returns
 
+    # PCT-F replication on 20 CME futures (Databento)
+    if (C.DATA_DIR / "futures_daily.parquet").exists():
+        from scripts import run_pct_f as PF
+
+        ohlc = E.load_ohlc(PF.TICKERS, "OOS")
+        rf = E.load_rf("OOS")
+        summary["PCT_F"] = {}
+        for name, ov in [("base", {}), ("tsmom_benchmark", {"measure": "none"}), ("id_variant", {"measure": "ID"})]:
+            w = PF.weights("OOS", **ov)
+            r = E.run_backtest(f"OOS_PCTF_{name}", PF.FAMILY, w, ohlc, rf, period="OOS",
+                               params={**ov, "universe": "futures20"}, exec=PF.EXEC, cost_bps=PF.COST_BPS)
+            summary["PCT_F"][name] = r.stats
+
     # the ensemble configuration chosen in-sample (Amendment 1), evaluated on the OOS window
     if sel.get("fte_selected"):
         cfg = sel["fte_config"]
@@ -90,6 +103,9 @@ def main() -> None:
             key = "FTE_selected" if cm == 1.0 else "FTE_selected_2x"
             summary[key] = res.stats
             if cm == 1.0:
+                to = EN.stream_turnover("FULL", cfg["labels"])
+                tt = EN.total_turnover(out, to, cfg["labels"]).loc[sl]
+                summary["FTE_selected_total_turnover_per_year"] = float(tt.sum() / (len(tt) / C.TRADING_DAYS))
                 summary["FTE_selected_factor_to_2026_08"] = E.factor_regression(res.excess, AN.factor_panel("OOS"))
                 curves["FTE_selected"] = res.returns
                 full = EN.to_result("FULL", "FULL", out, cfg)

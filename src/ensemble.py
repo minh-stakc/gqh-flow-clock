@@ -81,6 +81,30 @@ def stream_frame(period: str = "IS", cost_mult: float = 1.0, labels: list[str] |
     return ex, gr, rf.reindex(ex.index).ffill().fillna(0.0)
 
 
+def stream_turnover(period: str = "IS", labels: list[str] | None = None) -> pd.DataFrame:
+    """Daily turnover (sum |trade| / NAV at native size) of each stream, for reporting total turnover."""
+    labels = labels or list(STREAMS)
+    rf = E.load_rf(period)
+    out = {}
+    for lab in labels:
+        modname, variant = STREAMS[lab]
+        mod = importlib.import_module(f"src.strategies.{modname}")
+        params = _variant_params(mod, variant)
+        params.pop("cost_mult", None)
+        w = mod.decision_weights(period=period, **params)
+        ohlc = E.load_ohlc(list(w.columns), period)
+        _, _, to, _, _ = E.simulate(w, ohlc, rf, exec=mod.EXEC, cost_bps=getattr(mod, "COST_BPS", None))
+        out[lab] = to
+    return pd.DataFrame(out)
+
+
+def total_turnover(out: dict, to: pd.DataFrame, labels: list[str]) -> pd.Series:
+    """Underlying turnover of the ensemble: each stream's trades at its applied scale, plus the
+    overlay's re-scaling trades. ``out`` is the dict returned by combine()."""
+    scale = (out["lam"][labels] * out["k"].values[:, None])
+    return (scale * to[labels].reindex(scale.index).fillna(0.0)).sum(axis=1) + out["turnover_overlay"]
+
+
 def _live_mask(gr: pd.DataFrame) -> pd.DataFrame:
     started = (gr > 0).cumsum() > 0
     return started
@@ -143,7 +167,10 @@ def combine(ex: pd.DataFrame, gr: pd.DataFrame, rf: pd.Series, labels: list[str]
     var = (c ** 2).ewm(span=63, min_periods=63).mean()
     sig = np.sqrt(var * C.TRADING_DAYS).shift(2)
     k = (vol_target / sig).clip(upper=LEV_CAP)
-    gross_scaled = (lam * grl).sum(axis=1)
+    # leverage cap on max(today's, yesterday's) gross per stream: an exit day holds nothing but books
+    # the exit cost of yesterday's position, which must be scaled at the size actually being exited
+    grl_cap = np.maximum(grl, grl.shift(1).fillna(0.0))
+    gross_scaled = (lam * grl_cap).sum(axis=1)
     lev_scale = (LEV_CAP / (k * gross_scaled)).clip(upper=1.0).fillna(1.0)
     k = (k * lev_scale).fillna(0.0)
     start = (lam.abs().sum(axis=1) > 0) & sig.notna()
@@ -162,12 +189,16 @@ def combine(ex: pd.DataFrame, gr: pd.DataFrame, rf: pd.Series, labels: list[str]
     eq = np.ones(n)
     peak = np.ones(n)
     prev = np.zeros(len(labels))
+    g_prev = np.zeros(len(labels))
     for i in range(n):
         b = 1.0
         if brake and i >= 2 and eq[i - 2] / peak[i - 2] - 1 < -0.10:   # drawdown known at t-2
             b = 0.5
         scale = K[i] * b * L[i]
-        trade = np.abs(scale - prev) * G[i]
+        # re-scaling trades only on positions carried over from the previous day; entries and exits
+        # are already costed inside each stream's own returns (which scale with `scale`)
+        trade = np.abs(scale - prev) * np.minimum(G[i], g_prev)
+        g_prev = G[i]
         r[i] = scale @ X[i] - trade @ cb
         to[i] = trade.sum()
         prev = scale

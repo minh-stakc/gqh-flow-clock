@@ -32,8 +32,8 @@ def _jsonable(obj):
     return json.loads(json.dumps(obj, default=str))
 
 
-def in_sample() -> None:
-    for m in MODULES:
+def in_sample(skip_modules: bool = False) -> None:
+    for m in ([] if skip_modules else MODULES):
         print(f"== {m}")
         importlib.import_module(f"scripts.run_{m}").main()
     from src.strategies import ifc
@@ -48,6 +48,9 @@ def in_sample() -> None:
         outf = ifc.run("IS", futures=True)
         outf.pop("_results")
         (C.RESULTS_DIR / "is" / "ifc_f.json").write_text(json.dumps(_jsonable(outf), indent=2))
+    print("== PCT-F (Databento futures replication)")
+    if (C.DATA_DIR / "futures_daily.parquet").exists():
+        importlib.import_module("scripts.run_pct_f").main()
     print("== FTE ensemble search")
     importlib.import_module("scripts.run_fte").main()
 
@@ -63,5 +66,6 @@ def final_oos() -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--final", action="store_true", help="run the out-of-sample evaluation")
+    ap.add_argument("--skip-modules", action="store_true", help="in-sample: reuse the per-module runs")
     args = ap.parse_args()
-    final_oos() if args.final else in_sample()
+    final_oos() if args.final else in_sample(args.skip_modules)

@@ -87,6 +87,7 @@ def capacity_curve(
     aum_grid: list[float] | None = None,
     impact_coef: float = 1.0,
     adv_window: int = 63,
+    start: str | None = None,
 ) -> pd.DataFrame:
     """Square-root impact model: cost_bps(trade) = fixed + impact_coef * sigma_daily * sqrt(trade$/ADV$) * 1e4.
 
@@ -103,6 +104,9 @@ def capacity_curve(
     dollar_vol, sigma = dollar_vol.reindex(idx).ffill(), sigma.reindex(idx).ffill()
     fixed = pd.Series({t: C.cost_bps(t) for t in tickers}) / 1e4
     gross_ex = res.excess + res.costs                             # excess return before costs
+    if start is not None:                                         # e.g. capacity at today's liquidity
+        keep = idx >= pd.Timestamp(start)
+        trades, dollar_vol, sigma, gross_ex = trades[keep], dollar_vol[keep], sigma[keep], gross_ex[keep]
     rows = []
     for aum in aum_grid:
         part = (trades * aum / dollar_vol).clip(lower=0)

@@ -1,0 +1,48 @@
+{
+  "rule": "Amendment 1: highest in-sample DSR among FTE configurations passing G1-G3, if PBO < 0.25; else section 0 (IFC vs PCT).",
+  "pbo": 0.023232323232323233,
+  "n_trials_is": 1467,
+  "submitted": "FTE",
+  "fte_selected": "A+C+TSMOM|minvar_lw|vt8|nobrake",
+  "fte_config": {
+    "labels": [
+      "A",
+      "C",
+      "TSMOM"
+    ],
+    "scheme": "minvar_lw",
+    "vol_target": 0.08,
+    "brake": false
+  },
+  "is_stats": {
+    "start": "2006-05-08",
+    "end": "2024-10-02",
+    "years": 18.38,
+    "ann_return": 0.08975305293823621,
+    "ann_vol": 0.07585224310312855,
+    "sharpe": 0.9844849051303464,
+    "max_drawdown": -0.11670702737668504,
+    "turnover_per_year": 9.395577657962084,
+    "worst_month": -0.04656070523439915,
+    "best_month": 0.12195710419618022,
+    "skew_daily": 1.039090175819398,
+    "kurtosis_daily": 24.720693823105258,
+    "hit_rate_daily": 0.5007554500323764,
+    "nw_tstat_mean_excess": 4.621114707536138,
+    "psr_vs_0": 0.9999918920130801,
+    "trading_days_frac": 0.9207856680336715,
+    "calmar": 0.7690458317351204
+  },
+  "is_total_turnover_per_year": 89.9279676334561,
+  "is_avg_weights": {
+    "A": 1.5024682580460336,
+    "C": 8.093422875676332,
+    "TSMOM": 0.19371242781210368
+  },
+  "section0_reference": {
+    "IFC_base_sharpe": 0.9354361089099649,
+    "IFC_2x": 0.6065909929435144,
+    "IFC_neighbourhood_median": 0.8557348385395145,
+    "PCT_base_sharpe": 0.30096709171210867
+  }
+}

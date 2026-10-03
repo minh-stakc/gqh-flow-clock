@@ -121,7 +121,7 @@ def run(period: str = "IS", log: bool = True, futures: bool = False) -> dict:
     out["concentration"] = AN.pnl_concentration(base)
     out["factor"] = AN.factor_table(base)
     out["bootstrap_sharpe_90"] = AN.bootstrap_sharpe_ci(base.excess)
-    out["yearly"] = {int(k): float(v) for k, v in AN.yearly_returns(base.returns).items()}
+    out["yearly"] = {int(k): float(v) for k, v in E.yearly_returns(base.returns).items()}
     ex, _ = sleeve_returns(period, equity=inst["equity"], bond=inst["bond"])
     out["sleeve_corr"] = ex.loc[base.returns.index].corr().round(3).to_dict()
     out["capacity"] = AN.capacity_curve(base, ohlc).to_dict("records")
