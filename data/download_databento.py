@@ -35,7 +35,8 @@ from src import config as C  # noqa: E402
 ROOTS_DAILY = ["ES", "NQ", "RTY", "YM", "ZT", "ZF", "ZN", "ZB", "CL", "NG", "GC", "SI", "HG",
                "6E", "6J", "6B", "6A", "6C", "ZC", "ZS"]
 ROOTS_HOURLY = ["ES", "ZN"]
-START, END = "2010-06-06", "2026-10-03"
+START = "2010-06-06"
+END = os.environ.get("GQH_DATA_END", "2026-10-03")   # later dates for the forward test (FORWARD_TEST.md)
 # contract multipliers (USD per 1.0 of quoted price; grains quoted in cents per bushel)
 MULT = {"ES": 50, "NQ": 20, "RTY": 50, "YM": 5, "ZT": 2000, "ZF": 1000, "ZN": 1000, "ZB": 1000,
         "CL": 1000, "NG": 10000, "GC": 100, "SI": 5000, "HG": 25000, "6E": 125000, "6J": 12_500_000,

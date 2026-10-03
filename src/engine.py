@@ -57,6 +57,9 @@ def data_end(period: str) -> str:
                 "`GQH_OOS_UNLOCK=1 python run_all.py --final`."
             )
         return C.OOS_END
+    if period == "FWD":
+        # forward test: every date in the cache; data after OOS_END did not exist when it was frozen
+        return str(_read_parquet("etf_daily.parquet")["date"].max().date())
     raise ValueError(period)
 
 
@@ -69,6 +72,8 @@ def eval_window(period: str) -> tuple[str, str]:
     if period == "FULL":
         data_end(period)
         return C.HISTORY_START, C.OOS_END
+    if period == "FWD":
+        return C.FWD_START, data_end(period)
     raise ValueError(period)
 
 
@@ -384,6 +389,8 @@ def log_trial(res: BacktestResult, family: str, cost_mult: float, note: str = ""
     _append_csv(C.TRIALS_LOG, row)
     if res.period in ("OOS", "FULL"):
         _append_csv(C.OOS_LOG, row)
+    if res.period == "FWD":
+        _append_csv(C.FWD_LOG, row)
 
 
 def log_trials_bulk(results: list[BacktestResult], family: str, cost_mult: float, note: str = "") -> None:

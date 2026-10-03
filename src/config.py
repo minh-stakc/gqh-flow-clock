@@ -16,11 +16,16 @@ RESULTS_DIR = ROOT / "results"
 FIG_DIR = ROOT / "results" / "figures"
 TRIALS_LOG = RESULTS_DIR / "trials.csv"      # every backtest ever run (appended)
 OOS_LOG = RESULTS_DIR / "oos_log.csv"        # every OOS evaluation (should be one line per strategy)
+FWD_DIR = ROOT / "forward"
+FWD_LOG = FWD_DIR / "forward_log.csv"       # every forward-test evaluation (FORWARD_TEST.md)
 
 HISTORY_START = "2005-01-03"
 IS_END = "2024-10-02"        # last in-sample session
 OOS_START = "2024-10-03"     # first out-of-sample session
 OOS_END = "2026-10-02"       # last session available at the event (Fri Oct 2, 2026)
+# Forward test (FORWARD_TEST.md), frozen Sat 2026-10-03: only return days from FWD_START count, the first
+# day on which every position was traded after the freeze. Data after OOS_END did not exist at the freeze.
+FWD_START = "2026-10-06"
 
 TRADING_DAYS = 252
 

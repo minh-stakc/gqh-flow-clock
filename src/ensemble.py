@@ -160,7 +160,7 @@ def stream_weights(ex: pd.DataFrame, gr: pd.DataFrame, labels: list[str], scheme
 
 
 def combine(ex: pd.DataFrame, gr: pd.DataFrame, rf: pd.Series, labels: list[str], scheme: str,
-            vol_target: float, brake: bool, cost_mult: float = 1.0) -> dict:
+            vol_target: float, brake: bool, cost_mult: float = 1.0, cost_bps: dict | None = None) -> dict:
     lam = stream_weights(ex, gr, labels, scheme)
     exl, grl = ex[labels].fillna(0.0), gr[labels]
     c = (lam * exl).sum(axis=1)
@@ -182,7 +182,7 @@ def combine(ex: pd.DataFrame, gr: pd.DataFrame, rf: pd.Series, labels: list[str]
     G = grl.reindex(idx).to_numpy()
     K = k.reindex(idx).to_numpy()
     RF = rf.reindex(idx).to_numpy()
-    cb = np.array([STREAM_COST_BPS[s] for s in labels]) * cost_mult / 1e4
+    cb = np.array([(cost_bps or STREAM_COST_BPS)[s] for s in labels]) * cost_mult / 1e4
     n = len(idx)
     r = np.zeros(n)
     to = np.zeros(n)
