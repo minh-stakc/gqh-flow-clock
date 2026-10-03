@@ -1,5 +1,5 @@
 # Direct dependencies, pinned to the versions the results were produced with (Python 3.12.10).
-# Python 3.11+ should work. Full Windows environment freeze: requirements-lock-windows.txt
+# Requires Python 3.12+ (numpy 2.5.3 and scipy 1.18.1). Full Windows environment freeze: requirements-lock-windows.txt
 numpy==2.5.3
 pandas==3.0.6
 scipy==1.18.1

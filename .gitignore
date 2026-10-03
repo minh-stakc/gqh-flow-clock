@@ -12,3 +12,13 @@ research/
 note/*.aux
 note/*.log
 note/*.out
+DEVPOST_DRAFT.md
+*.parquet
+*.dbn
+*.dbn.zst
+**/databento_raw/
+.env.*
+!.env.example
+note/*.synctex.gz
+note/*.fls
+note/*.fdb_latexmk

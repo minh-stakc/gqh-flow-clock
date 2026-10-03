@@ -1,7 +1,4 @@
-# Pinned from a working venv (Python 3.12.10, Windows 11) on 2026-10-03.
-# Venv lives at C:/Users/hoang/.venvs/gqh-systematic (D: is a slow FAT32 USB stick);
-# D:/AUTOMATION/gqh-systematic/.venv/Scripts/python.exe also works via a .pth shim to it.
-# Recreate: python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
+# Full pip freeze of the Windows environment the results were produced in (Python 3.12.10).
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.3
 aiosignal==1.4.0

@@ -79,7 +79,13 @@ def main() -> None:
         if oo == -6 and pt >= 0:
             ge, gb = ce[i] / ce[int(pt)], cb[i] / cb[int(pt)]
             drift.iloc[i] = 0.6 * ge / (0.6 * ge + 0.4 * gb) - 0.6
-    sgn = np.sign(drift).groupby(mo["month"].values).transform("max")
+    # each day is signed by the drift observed at T-6 of the month whose window it follows: days up to
+    # T use their own month's drift, the first days of the next month use the month that just ended
+    msign = np.sign(drift).groupby(mo["month"].values).max()
+    own = pd.Series(mo["month"].map(msign).values, index=c.index)
+    prev = pd.Series((mo["month"] - 1).map(msign).values, index=c.index)
+    post_turn = mo["off_prev"].le(5) & mo["off_own"].lt(-10)          # T+1..T+5 of the previous month
+    sgn = pd.Series(np.where(post_turn, prev, own), index=c.index)
     spread_signed = -(exr["SPY"] - exr["IEF"]) * sgn                   # positive if rebalancing pressure pays
     ev = {}
     for name, sl in (("IS", slice(C.HISTORY_START, C.IS_END)), ("OOS", slice(C.OOS_START, C.OOS_END))):
@@ -88,11 +94,18 @@ def main() -> None:
         ev[name] = prof
         lastk = d["off"].between(-2, 0)
         lastw = d["off"].between(-4, 0)
+        allx = exr["IEF"].loc[sl]
+        last_all = mo["off_own"].loc[sl].between(-2, 0)
         out[f"mech_{name}"] = {
             "C_ief_last3_bp_per_day": float(d.loc[lastk, "ief"].mean() * 1e4),
-            "C_ief_other_bp_per_day": float(d.loc[~lastk, "ief"].mean() * 1e4),
+            "C_ief_other_bp_per_day": float(d.loc[~lastk, "ief"].mean() * 1e4),          # other days T-10..T+5
+            "C_ief_other_alldays_bp_per_day": float(allx[~last_all].mean() * 1e4),
             "A_signed_spread_lastweek_bp_per_day": float(d.loc[lastw, "rb"].mean() * 1e4),
+            "A_signed_spread_T1_bp": float(d.loc[d["off"] == 1, "rb"].mean() * 1e4),
             "n_months": int(lastk.sum() / 3),
+            "n_days": int(len(allx)),
+            "rf_avg_ann": float(rfl.loc[sl].mean() * C.TRADING_DAYS),
+            "ief_daily_vol": float(exr["IEF"].loc[sl].std()),
         }
     pd.concat(ev, axis=1).to_csv(C.RESULTS_DIR / "event_time_profiles.csv")
 
@@ -113,19 +126,39 @@ def main() -> None:
     held_sum = held_sum.fillna(0.0)
     tick = list(held_sum.columns)
     oh = E.load_ohlc(tick, "FULL")
+    # capacity starts from GROSS returns (the zero-cost combination); capacity_curve then charges the
+    # fixed costs once plus square-root impact on the strategy's actual trades
+    gross_ex = comb0["excess"].reindex(exc.index).fillna(0.0)
     res = E.BacktestResult("FTE", "FULL", comb["net"], comb["net"], exc, comb["turnover_overlay"],
-                           held_sum.reindex(exc.index).fillna(0.0), pd.Series(0.0, index=exc.index))
+                           held_sum.reindex(exc.index).fillna(0.0), gross_ex - exc)
+    nx = exc.loc["2019-10-01":C.IS_END]
+    out["net_sharpe_2019_2024"] = float(nx.mean() / nx.std() * math.sqrt(C.TRADING_DAYS))
     cap_recent = AN.capacity_curve(res, oh, start="2019-10-01", end=C.IS_END)   # recent in-sample liquidity
     cap_oos = AN.capacity_curve(res, oh, start=C.OOS_START)
     out["capacity_recent"] = cap_recent.to_dict("records")
     # flow sleeves on CME futures (IFC-F), in-sample, with the same AUM grid
     from src.strategies import ifc as IFC
 
-    ohf = E.load_ohlc(["ES16", "ZN16"], "IS")
-    rff = E.load_rf("IS")
-    rf_res = E.run_backtest("IFCF_composite_base", "IFC_F", IFC.decision_weights("IS", **IFC.FUTURES_PARAMS), ohf, rff,
-                            period="IS", exec=IFC.EXEC, cost_bps=IFC.FUTURES_COST_BPS, log=False)
-    out["capacity_futures_ifc"] = AN.capacity_curve(rf_res, ohf).to_dict("records")
+    if (C.DATA_DIR / "futures_1600.parquet").exists():
+        ohf = E.load_ohlc(["ES16", "ZN16"], "IS")
+        rff = E.load_rf("IS")
+        rf_res = E.run_backtest("IFCF_composite_base", "IFC_F", IFC.decision_weights("IS", **IFC.FUTURES_PARAMS), ohf,
+                                rff, period="IS", exec=IFC.EXEC, cost_bps=IFC.FUTURES_COST_BPS, log=False)
+        out["capacity_futures_ifc"] = AN.capacity_curve(rf_res, ohf).to_dict("records")
+        fo = E.load_ohlc(["ES16", "ZN16", "SPY", "IEF"], "FULL")
+        fr = fo["close"].pct_change(fill_method=None).loc[:C.IS_END]
+        out["corr_ES_SPY"] = float(fr["ES16"].corr(fr["SPY"]))
+        out["corr_ZN_IEF"] = float(fr["ZN16"].corr(fr["IEF"]))
+        dv = fo["close"] * fo["volume"]
+        for nm, sl in (("2019_2024", slice("2019-10-01", C.IS_END)), ("oos", slice(C.OOS_START, C.OOS_END))):
+            out[f"median_dollar_volume_{nm}"] = {k: float(v) for k, v in dv.loc[sl].median().items()}
+    else:  # no Databento data: keep the committed futures numbers
+        prev = C.RESULTS_DIR / "diagnostics.json"
+        old = json.loads(prev.read_text()) if prev.exists() else {}
+        for k in ("capacity_futures_ifc", "corr_ES_SPY", "corr_ZN_IEF", "median_dollar_volume_2019_2024",
+                  "median_dollar_volume_oos"):
+            if k in old:
+                out[k] = old[k]
     out["capacity_oos_window"] = cap_oos.to_dict("records")
     out["gross_exposure"] = {"mean": float(held_sum.abs().sum(axis=1).mean()),
                              "p95": float(held_sum.abs().sum(axis=1).quantile(0.95)),

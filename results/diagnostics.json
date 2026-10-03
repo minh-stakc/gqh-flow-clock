@@ -22,67 +22,78 @@
   "mech_IS": {
     "C_ief_last3_bp_per_day": 7.227711452057705,
     "C_ief_other_bp_per_day": -0.39922272251176427,
+    "C_ief_other_alldays_bp_per_day": -0.2909490075122655,
     "A_signed_spread_lastweek_bp_per_day": 11.043787865133393,
-    "n_months": 237
+    "A_signed_spread_T1_bp": -41.51662683939645,
+    "n_months": 237,
+    "n_days": 4971,
+    "rf_avg_ann": 0.015619604421175102,
+    "ief_daily_vol": 0.004314776450481912
   },
   "mech_OOS": {
     "C_ief_last3_bp_per_day": 3.0422574732375396,
     "C_ief_other_bp_per_day": -1.5824053511919218,
+    "C_ief_other_alldays_bp_per_day": -2.6848096450583054,
     "A_signed_spread_lastweek_bp_per_day": 2.5209540680008655,
-    "n_months": 24
+    "A_signed_spread_T1_bp": 16.383916104269023,
+    "n_months": 24,
+    "n_days": 501,
+    "rf_avg_ann": 0.03957882797731569,
+    "ief_daily_vol": 0.003491045812564953
   },
+  "net_sharpe_2019_2024": 1.0163577478738934,
   "capacity_recent": [
     {
       "aum": 1000.0,
-      "net_sharpe": 0.7133265119495201,
+      "net_sharpe": 1.0438719061461899,
       "cost_drag_ann": 0.023631187447307238,
       "max_participation": 1.2622472239095949e-05
     },
     {
       "aum": 1000000.0,
-      "net_sharpe": 0.4868616887657887,
+      "net_sharpe": 0.8179915516628558,
       "cost_drag_ann": 0.04117512448802181,
       "max_participation": 0.012622472239095949
     },
     {
       "aum": 10000000.0,
-      "net_sharpe": -0.013867413807539253,
+      "net_sharpe": 0.31230951437923476,
       "cost_drag_ann": 0.08034876696735777,
       "max_participation": 0.1262247223909595
     },
     {
       "aum": 30000000.0,
-      "net_sharpe": -0.5286098032637253,
+      "net_sharpe": -0.21624516097786825,
       "cost_drag_ann": 0.12228831231180726,
       "max_participation": 0.37867416717287844
     },
     {
       "aum": 100000000.0,
-      "net_sharpe": -1.4219309740651,
+      "net_sharpe": -1.1528046089760406,
       "cost_drag_ann": 0.20422670144718486,
       "max_participation": 1.2622472239095948
     },
     {
       "aum": 300000000.0,
-      "net_sharpe": -2.4870828708187185,
+      "net_sharpe": -2.2950005006436616,
       "cost_drag_ann": 0.3368511887675562,
       "max_participation": 3.7867416717287847
     },
     {
       "aum": 1000000000.0,
-      "net_sharpe": -3.567505510605135,
+      "net_sharpe": -3.4677636165519354,
       "cost_drag_ann": 0.5959631262405443,
       "max_participation": 12.62247223909595
     },
     {
       "aum": 3000000000.0,
-      "net_sharpe": -4.192325179896145,
+      "net_sharpe": -4.144162142650219,
       "cost_drag_ann": 1.0153585796850393,
       "max_participation": 37.867416717287846
     },
     {
       "aum": 10000000000.0,
-      "net_sharpe": -4.530843183561453,
+      "net_sharpe": -4.508320805965126,
       "cost_drag_ann": 1.8347424710388154,
       "max_participation": 126.22472239095949
     }
@@ -143,58 +154,72 @@
       "max_participation": 0.36479525251817285
     }
   ],
+  "corr_ES_SPY": 0.997944103186015,
+  "corr_ZN_IEF": 0.9868202105093732,
+  "median_dollar_volume_2019_2024": {
+    "ES16": 307938814500.0,
+    "ZN16": 171383003875.0,
+    "SPY": 28921621309.161377,
+    "IEF": 587798480.8822632
+  },
+  "median_dollar_volume_oos": {
+    "ES16": 441086861925.0,
+    "ZN16": 183792621250.0,
+    "SPY": 39571086550.201416,
+    "IEF": 658958102.0690918
+  },
   "capacity_oos_window": [
     {
       "aum": 1000.0,
-      "net_sharpe": -0.562468852698308,
+      "net_sharpe": -0.0664323303636885,
       "cost_drag_ann": 0.029488947431406533,
       "max_participation": 7.092886382886921e-06
     },
     {
       "aum": 1000000.0,
-      "net_sharpe": -0.8068705048580359,
+      "net_sharpe": -0.318976075320774,
       "cost_drag_ann": 0.046264050649351365,
       "max_participation": 0.00709288638288692
     },
     {
       "aum": 10000000.0,
-      "net_sharpe": -1.3270552362545485,
+      "net_sharpe": -0.86569689893645,
       "cost_drag_ann": 0.08372097348763365,
       "max_participation": 0.0709288638288692
     },
     {
       "aum": 30000000.0,
-      "net_sharpe": -1.8345278317461353,
+      "net_sharpe": -1.4106909600099988,
       "cost_drag_ann": 0.12382258810435838,
       "max_participation": 0.2127865914866076
     },
     {
       "aum": 100000000.0,
-      "net_sharpe": -2.6564820923822645,
+      "net_sharpe": -2.3152493486862866,
       "cost_drag_ann": 0.20217016379778455,
       "max_participation": 0.709288638288692
     },
     {
       "aum": 300000000.0,
-      "net_sharpe": -3.5540051159564516,
+      "net_sharpe": -3.3260984663602113,
       "cost_drag_ann": 0.32898260383693473,
       "max_participation": 2.127865914866076
     },
     {
       "aum": 1000000000.0,
-      "net_sharpe": -4.390153358436799,
+      "net_sharpe": -4.276103835992917,
       "cost_drag_ann": 0.5767393921806074,
       "max_participation": 7.09288638288692
     },
     {
       "aum": 3000000000.0,
-      "net_sharpe": -4.8403122292864165,
+      "net_sharpe": -4.784790468517353,
       "cost_drag_ann": 0.9777555383478544,
       "max_participation": 21.278659148660758
     },
     {
       "aum": 10000000000.0,
-      "net_sharpe": -5.065467613548216,
+      "net_sharpe": -5.038746067782599,
       "cost_drag_ann": 1.7612312952821165,
       "max_participation": 70.9288638288692
     }

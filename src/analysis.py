@@ -65,7 +65,7 @@ def pnl_concentration(res: E.BacktestResult) -> dict:
 
 
 def bootstrap_sharpe_ci(excess: pd.Series, block: int = 21, n_boot: int = 2000, seed: int = 7) -> tuple[float, float]:
-    """Stationary-block bootstrap 90% interval for the annualized Sharpe ratio."""
+    """Moving-block bootstrap (fixed 21-day blocks) 90% interval for the annualized Sharpe ratio."""
     x = excess.dropna().to_numpy()
     n = len(x)
     rng = np.random.default_rng(seed)

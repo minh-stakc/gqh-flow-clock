@@ -26,7 +26,7 @@ TRADING_DAYS = 252
 
 # One-way transaction cost in basis points per unit of turnover (commission +
 # half-spread + slippage). Tier-1 ETFs quote 1-cent spreads on $100-$600 prices
-# (0.2-1 bp half-spread); we charge several times that to cover slippage and
+# (0.08-0.5 bp half-spread); we charge several times that to cover slippage and
 # market impact at the sizes discussed in the capacity section.
 COST_BPS_TIER1 = 3.0
 COST_BPS_TIER2 = 5.0
