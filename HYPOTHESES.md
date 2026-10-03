@@ -220,6 +220,47 @@ contract (no roll gaps), held fully collateralised at the T-bill rate, no borrow
 
 ---------------------------------------------------------------------------------------------
 
+## 6. Amendment 1 (Sat 2026-10-03, committed before the author read any in-sample result)
+
+**Why.** The team wants to know whether a materially higher risk-adjusted return (in-sample Sharpe
+around 1.2-1.5 with small drawdowns) is reachable without overfitting. The honest route is
+diversification across independent pre-registered edges plus risk control, searched in-sample only,
+with every configuration logged and the search itself tested for overfitting. The out-of-sample
+window stays locked and is still evaluated once.
+
+**Candidate 3: Flow-and-Trend ensemble (FTE).** A risk-balanced combination of return streams that
+were each specified above before any result: IFC sleeves A, B, C, exploratory sleeves D and E, and
+PCT (and the plain TSMOM benchmark as an alternative trend leg).
+
+**Exploration space (all in-sample, all logged, all counted in the Deflated Sharpe).**
+
+* Stream subsets: every subset of {A, B, C, D, E} of size >= 2, combined with {none, PCT, TSMOM}
+  as the trend leg.
+* Weighting: equal risk (inverse trailing volatility); inverse volatility with a 0.5 shrink toward
+  equal weights; minimum variance with Ledoit-Wolf shrinkage. All estimated on expanding windows
+  of past stream returns only (at least 252 days), lagged one day.
+* Risk overlay: portfolio volatility target of 6 %, 8 % or 10 % (trailing 63-day EWMA of the
+  combined returns, lagged, leverage cap 4); and with or without a drawdown brake that halves
+  exposure while the strategy is more than 10 % below its running peak (re-armed at a new peak).
+
+**Overfitting controls and selection (replaces the section 0 rule for the final pick).**
+
+1. Probability of Backtest Overfitting (Bailey, Borwein, Lopez de Prado & Zhu 2017) by
+   combinatorially symmetric cross-validation over all FTE configurations, with the in-sample
+   period cut into 16 contiguous blocks (12,870 train/test splits).
+2. The final strategy is the FTE configuration with the highest in-sample Deflated Sharpe Ratio
+   (trial count = every in-sample trial in `results/trials.csv`), provided PBO < 0.25 and the
+   configuration passes gates G1-G3; if PBO >= 0.25 the search is declared overfit and the
+   section 0 rule (IFC vs PCT) decides instead.
+3. Reported for the chosen configuration: its rank stability across the CSCV splits, the median
+   Sharpe of all configurations (to show the choice is not a lucky outlier), and the OOS once.
+
+No in-sample result has been looked at by the author when this amendment was written; build agents
+were already running the section 1-2 specifications in parallel and their logs (`trials.csv`) were
+not opened before this commit.
+
+---------------------------------------------------------------------------------------------
+
 ## 5. Considered and not pursued (no backtests run)
 
 Pre-FOMC drift (disappeared after 2015, Kurov, Wolfe & Gilbert 2021); the overnight drift (about
