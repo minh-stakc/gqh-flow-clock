@@ -1,0 +1,9 @@
+# raw/licensed data and secrets never go in git
+data/cache/
+.massive_cache/
+.env
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+research/
