@@ -1,0 +1,10 @@
+original_hash,current_hash,tree,date,subject
+fb235f7,d20c9d5,4c1f6500bbc9715d029bd8989095ebb5660ed442,2026-10-03 06:45:17 -0400,"Pre-register hypotheses, specifications and selection rule before any backtest"
+c3b9ae3,f2607fb,2c5efb30a9f1ae8f7d8963801e61a9ed37c39ecf,2026-10-03 06:48:03 -0400,"Engine: futures support (roll costs, no borrow), NYSE calendar alignment, calendar helpers, locked trial log"
+12e28bf,06b22c9,dff4c75e3fabb4a1cafdf0a5ff527cf9b5c4e61e,2026-10-03 07:02:45 -0400,Amendment 1: pre-register the flow-and-trend ensemble search and PBO/DSR overfitting controls
+ef6bd10,dd44096,dc0b59e98f31ccfe88b6b9fcaf8f5d14f1783125,2026-10-03 07:29:42 -0400,"Sleeves A-E and PCT (built + adversarially audited), IFC composite, ensemble/PBO code, Databento futures builder"
+5b62ac2,b054990,183b59b6af3d5b5f619c6a35b9d576485328611f,2026-10-03 07:45:57 -0400,Freeze selection before out-of-sample: FTE A+C+TSMOM 
+9b9aa72,1ce3ff0,a7ccd9c751d50694081333b3e806c52db9f5d3b0,2026-10-03 07:48:13 -0400,"Out-of-sample evaluation, run once (2024-10-03 .. 2026-10-02), reported as produced"
+8171757,a76e1d5,9bdd69ed351d03f544ad739bdd8bcc927516e3bc,2026-10-03 07:58:46 -0400,"Quant note (generated numbers + figures), post-hoc diagnostics, capacity at recent liquidity"
+1dfb212,6e49ea5,3e8bd2f87b9cd4c8299e7a9c8688cd5aefbba725,2026-10-03 08:00:06 -0400,run_all: call the selection step and diagnostics; minimal cross-platform requirements
+acbaf1a,e23a72f,df1394c6fc3b6bacd5d4ec67c97969910a9de9d6,2026-10-03 08:35:17 -0400,Note revised after independent fact-check/compliance/judge review; one-command reproduction
