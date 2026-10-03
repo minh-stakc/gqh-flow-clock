@@ -24,7 +24,7 @@ MODULES = ["ifc_rebalance", "ifc_dash", "ifc_treasury", "pct"]
 CUTS = ["2009-03-09", "2015-06-15", "2020-03-16", "2023-10-31"]
 
 
-def _perturbed_loader(original, cut: pd.Timestamp, seed: int):
+def _perturbed_loader(original, cut: pd.Timestamp, seed: int, volume: bool = False):
     def load(tickers=None, period="IS"):
         out = original(tickers, period)
         rng = np.random.default_rng(seed)
@@ -35,6 +35,10 @@ def _perturbed_loader(original, cut: pd.Timestamp, seed: int):
             base = px.loc[~after].ffill().iloc[-1].to_numpy() if (~after).any() else np.ones(px.shape[1])
             px.loc[after] = base * noise
             out[col] = px
+        if volume and "volume" in out:                 # forward2 eligibility reads volume: zero half of it later
+            v = out["volume"].copy()
+            v.loc[after] = v.loc[after] * (rng.random((after.sum(), v.shape[1])) < 0.5)
+            out["volume"] = v
         return out
     return load
 
@@ -76,6 +80,39 @@ def test_no_lookahead():
         check_module(m)
 
 
+FWD2 = ["S1", "S2", "S3", "LONG_ONLY_F", "ES_10VOL", "BH5"]
+FWD2_CUTS = ["2015-06-15", "2020-03-16", "2023-10-31"]      # futures start 2010-06 plus 300 sessions of history
+
+
+def check_forward2(name: str) -> None:
+    from src import forward2 as F2
+
+    fn = F2.SPECS[name][0]
+    original = E.load_ohlc
+    base = fn("IS")
+    for i, c in enumerate(FWD2_CUTS):
+        cut = pd.Timestamp(c)
+        E.load_ohlc = _perturbed_loader(original, cut, seed=200 + i, volume=True)
+        try:
+            pert = fn("IS")
+        finally:
+            E.load_ohlc = original
+        a = base.loc[:cut].fillna(0.0)
+        b = pert.reindex(a.index).fillna(0.0)
+        diff = float((a - b).abs().to_numpy().max())
+        assert diff == 0.0, f"forward2 {name}: decisions up to {c} changed by {diff} after perturbing later data"
+        later = float((base.loc[cut:].iloc[5:].fillna(0.0) - pert.loc[cut:].iloc[5:].fillna(0.0)).abs().to_numpy().max())
+        if name != "BH5":                              # BH5's weights are constant after warm-up: nothing to move
+            assert later > 0, f"forward2 {name}: perturbation had no effect after {c} (test has no power)"
+        print(f"  forward2 {name:11s} cut {c}: OK (max diff before cut {diff}, after cut {later:.3f})")
+
+
+def test_forward2_no_lookahead():
+    for m in FWD2:
+        check_forward2(m)
+
+
 if __name__ == "__main__":
     test_no_lookahead()
+    test_forward2_no_lookahead()
     print("no lookahead detected")

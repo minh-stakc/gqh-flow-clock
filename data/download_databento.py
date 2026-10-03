@@ -18,6 +18,12 @@ Construction:
     days, then the T-bill return of the NYSE day is added: the series is a fully collateralised
     total-return index on the NYSE calendar, so the engine treats it like an ETF (no borrow fee).
   * volume column = front-contract dollar volume / index level, so close * volume = dollar volume.
+    NYSE days without a vendor bar (vendor gap, delisting, data older than the ETF file) get a zero
+    excess return and zero volume; forward2.py and run_forward2.py use volume > 0 to tell them apart.
+
+    python data/download_databento.py                    # streaming requests, one per root
+    python data/download_databento.py --batch            # daily bars through one Databento batch job
+    python data/download_databento.py --batch-job <id>   # resume: download a job that was already submitted
 """
 from __future__ import annotations
 
@@ -33,15 +39,20 @@ sys.path.insert(0, str(ROOT))
 from src import config as C  # noqa: E402
 
 ROOTS_DAILY = ["ES", "NQ", "RTY", "YM", "ZT", "ZF", "ZN", "ZB", "CL", "NG", "GC", "SI", "HG",
-               "6E", "6J", "6B", "6A", "6C", "ZC", "ZS"]
+               "6E", "6J", "6B", "6A", "6C", "ZC", "ZS",
+               # added for forward test 2 (FORWARD_TEST_2.md, broad trend universe)
+               "UB", "HO", "RB", "PL", "ZW", "ZL", "ZM", "LE", "HE", "6S"]
 ROOTS_HOURLY = ["ES", "ZN"]
 START = "2010-06-06"
 END = os.environ.get("GQH_DATA_END", "2026-10-03")   # later dates for the forward test (FORWARD_TEST.md)
 # contract multipliers (USD per 1.0 of quoted price; grains quoted in cents per bushel)
 MULT = {"ES": 50, "NQ": 20, "RTY": 50, "YM": 5, "ZT": 2000, "ZF": 1000, "ZN": 1000, "ZB": 1000,
         "CL": 1000, "NG": 10000, "GC": 100, "SI": 5000, "HG": 25000, "6E": 125000, "6J": 12_500_000,
-        "6B": 62500, "6A": 100000, "6C": 100000, "ZC": 50, "ZS": 50}
+        "6B": 62500, "6A": 100000, "6C": 100000, "ZC": 50, "ZS": 50,
+        "UB": 1000, "HO": 42000, "RB": 42000, "PL": 50, "ZW": 50, "ZL": 600, "ZM": 100, "LE": 400,
+        "HE": 400, "6S": 125000}
 RAW = C.DATA_DIR / "databento_raw"
+DAILY_NAME = "glbx_ohlcv1d_v01"
 
 
 def _key() -> str:
@@ -58,7 +69,10 @@ def _key() -> str:
 def _pull(schema: str, roots: list[str], name: str) -> pd.DataFrame:
     path = RAW / f"{name}.parquet"
     if path.exists():
-        return pd.read_parquet(path)
+        cached = pd.read_parquet(path)
+        have = set(cached["symbol"].str.split(".").str[0])
+        if set(roots) <= have:
+            return cached[cached["symbol"].str.split(".").str[0].isin(roots)]
     import time
 
     import databento as db
@@ -155,8 +169,45 @@ def _prep(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def batch_daily(job_id: str | None = None) -> None:
+    """Fetch the daily bars with one batch job instead of per-root streaming requests (the streaming gateway
+    timed out repeatedly on 2026-10-03). Writes RAW/<name>__<root>__batch.parquet, which _pull prefers."""
+    import time
+
+    import databento as db
+
+    client = db.Historical(_key())
+    RAW.mkdir(parents=True, exist_ok=True)
+    if job_id is None:
+        todo = [r for r in ROOTS_DAILY if not (RAW / f"{DAILY_NAME}__{r}__batch.parquet").exists()
+                and not (RAW / f"{DAILY_NAME}__{r}__{START[:4]}.parquet").exists()]
+        if not todo:
+            print("daily bars already cached for every root")
+            return
+        job = client.batch.submit_job(dataset="GLBX.MDP3", symbols=[f"{r}.v.{k}" for r in todo for k in (0, 1)],
+                                      schema="ohlcv-1d", stype_in="continuous", start=START, end=END,
+                                      encoding="dbn", compression="zstd", split_duration="none")
+        job_id = job["id"]
+        print(f"submitted batch job {job_id} for {len(todo)} roots (resume with --batch-job {job_id})")
+    since = pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=7)
+    for _ in range(180):                                  # about an hour
+        state = next((j["state"] for j in client.batch.list_jobs(since=since) if j["id"] == job_id), None)
+        if state == "done":
+            break
+        print(f"  job {job_id}: {state}")
+        time.sleep(20)
+    else:
+        raise SystemExit(f"batch job {job_id} not done after an hour; resume with --batch-job {job_id}")
+    for f in client.batch.download(job_id=job_id, output_dir=RAW / "batch" / job_id):
+        if str(f).endswith(".dbn.zst"):
+            df = db.DBNStore.from_file(f).to_df().reset_index()
+            for r, g in df.groupby(df["symbol"].str.split(".").str[0]):
+                g.to_parquet(RAW / f"{DAILY_NAME}__{r}__batch.parquet", index=False)
+                print(f"  saved {r}: {len(g)} rows")
+
+
 def build_daily(rf: pd.Series, cal: pd.DatetimeIndex) -> None:
-    raw = _prep(_pull("ohlcv-1d", ROOTS_DAILY, "glbx_ohlcv1d_v01"))
+    raw = _prep(_pull("ohlcv-1d", ROOTS_DAILY, DAILY_NAME))
     raw["date"] = pd.to_datetime(raw["ts_event"]).dt.tz_convert("UTC").dt.tz_localize(None).dt.normalize()
     raw = raw[raw["date"].dt.dayofweek < 5]          # Sunday-evening session bars are dropped
     frames = []
@@ -172,7 +223,7 @@ def build_daily(rf: pd.Series, cal: pd.DatetimeIndex) -> None:
 
 def build_hourly_1600(rf: pd.Series, cal: pd.DatetimeIndex) -> None:
     raw = _prep(_pull("ohlcv-1h", ROOTS_HOURLY, "glbx_ohlcv1h_v01_es_zn"))
-    daily = _prep(_pull("ohlcv-1d", ROOTS_DAILY, "glbx_ohlcv1d_v01"))
+    daily = _prep(_pull("ohlcv-1d", ROOTS_DAILY, DAILY_NAME))
     ts = pd.to_datetime(raw["ts_event"]).dt.tz_convert("America/New_York")
     raw["date"] = ts.dt.tz_localize(None).dt.normalize()
     raw["start_min"] = ts.dt.hour * 60 + ts.dt.minute
@@ -193,6 +244,9 @@ def build_hourly_1600(rf: pd.Series, cal: pd.DatetimeIndex) -> None:
 
 
 def main() -> None:
+    if "--batch" in sys.argv or "--batch-job" in sys.argv:
+        jid = sys.argv[sys.argv.index("--batch-job") + 1] if "--batch-job" in sys.argv else None
+        batch_daily(jid)
     rf = pd.read_parquet(C.DATA_DIR / "rf_daily.parquet").set_index("date")["rf"]
     rf.index = pd.to_datetime(rf.index)
     etf = pd.read_parquet(C.DATA_DIR / "etf_daily.parquet")
