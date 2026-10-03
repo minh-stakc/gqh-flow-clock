@@ -1,0 +1,78 @@
+{
+  "computed_after_freeze_commit": "851ac74 (tag forward-test-2026-10-03)",
+  "note": "Context only: history of the frozen forward-test strategies, from each one's first traded day. Not used to choose or change anything.",
+  "strategies": {
+    "F1": {
+      "in_sample": {
+        "start": "2006-05-26",
+        "end": "2024-10-02",
+        "ann_return": 0.08988104627323845,
+        "ann_vol": 0.0759669958967702,
+        "sharpe": 0.9859811686547163,
+        "max_drawdown": -0.11670702737668526
+      },
+      "out_of_sample": {
+        "start": "2024-10-03",
+        "end": "2026-10-02",
+        "ann_return": 0.029857431494094477,
+        "ann_vol": 0.06589056004746328,
+        "sharpe": -0.1215201263162079,
+        "max_drawdown": -0.0866973729763657
+      }
+    },
+    "F2": {
+      "in_sample": {
+        "start": "2011-10-27",
+        "end": "2024-10-02",
+        "ann_return": 0.07661020752128023,
+        "ann_vol": 0.06537856253119842,
+        "sharpe": 0.9626858902772399,
+        "max_drawdown": -0.06159154619618101
+      },
+      "out_of_sample": {
+        "start": "2024-10-03",
+        "end": "2026-10-02",
+        "ann_return": 0.03282147038342731,
+        "ann_vol": 0.05582716249285488,
+        "sharpe": -0.10283122620423983,
+        "max_drawdown": -0.05552841825808941
+      }
+    },
+    "F3": {
+      "in_sample": {
+        "start": "2011-09-02",
+        "end": "2024-10-02",
+        "ann_return": 0.0451059052573386,
+        "ann_vol": 0.0801252400383951,
+        "sharpe": 0.43002102130319675,
+        "max_drawdown": -0.1408176772503673
+      },
+      "out_of_sample": {
+        "start": "2024-10-03",
+        "end": "2026-10-02",
+        "ann_return": 0.0420165089081026,
+        "ann_vol": 0.08076803188537125,
+        "sharpe": 0.05976102640440168,
+        "max_drawdown": -0.09080579431567737
+      }
+    },
+    "TSMOM_F": {
+      "in_sample": {
+        "start": "2011-09-02",
+        "end": "2024-10-02",
+        "ann_return": 0.032115112529330636,
+        "ann_vol": 0.07761711849704594,
+        "sharpe": 0.2801745458303881,
+        "max_drawdown": -0.13798308062627263
+      },
+      "out_of_sample": {
+        "start": "2024-10-03",
+        "end": "2026-10-02",
+        "ann_return": 0.04843547495038125,
+        "ann_vol": 0.0753360348089337,
+        "sharpe": 0.13996020666541795,
+        "max_drawdown": -0.09701903413572777
+      }
+    }
+  }
+}
